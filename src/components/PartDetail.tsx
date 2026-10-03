@@ -13,7 +13,9 @@ export function PartDetail({
 }) {
   const { size, detail } = component.geometry;
   const texture = useMemo(() => {
-    if (!detail) return null;
+    // The iPhone assemblies already have purpose-built 3D geometry. Keep the
+    // older texture labels only for the generic demo-phone model.
+    if (!detail || component.productId !== "demo-phone") return null;
     const canvas = document.createElement("canvas");
     canvas.width = 256;
     canvas.height = 512;
@@ -100,27 +102,8 @@ export function PartDetail({
     const image = new CanvasTexture(canvas);
     image.colorSpace = SRGBColorSpace;
     return image;
-  }, [detail]);
+  }, [component.productId, detail]);
   useEffect(() => () => texture?.dispose(), [texture]);
-  if (detail === "lens")
-    return (
-      <group position={[0, 0, size[2] / 2 + 0.01]}>
-        <mesh>
-          <cylinderGeometry args={[size[0] * 0.4, size[0] * 0.4, 0.04, 24]} />
-          <meshStandardMaterial color="#141a24" transparent opacity={opacity} />
-        </mesh>
-        <mesh rotation={[Math.PI / 2, 0, 0]}>
-          <sphereGeometry args={[size[0] * 0.3, 24, 16]} />
-          <meshStandardMaterial
-            color="#101f36"
-            metalness={0.65}
-            roughness={0.12}
-            transparent
-            opacity={opacity}
-          />
-        </mesh>
-      </group>
-    );
   if (!texture) return null;
   return (
     <mesh position={[0, 0, size[2] / 2 + 0.006]}>

@@ -83,7 +83,27 @@ export const componentSchema = z.object({
     color: z.string(),
     exterior: z.boolean(),
     detail: z
-      .enum(["battery", "circuit", "lens", "screen", "grille", "chip", "port"])
+      .enum([
+        "battery",
+        "circuit",
+        "lens",
+        "front-camera",
+        "screen",
+        "grille",
+        "chip",
+        "port",
+        "enclosure",
+        "glass",
+        "adhesive",
+        "cowling",
+        "spacer",
+        "speaker",
+        "taptic",
+        "microphone",
+        "connector",
+        "coil",
+        "vapor-chamber",
+      ])
       .optional(),
   }),
   repair: z.object({
