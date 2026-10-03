@@ -568,3 +568,22 @@
     animation: none;
   }
 }
+
+@media (max-width: 700px) {
+  .inside-hero-header a.inside-hero-skip {
+    display: inline-block;
+    font-size: 9px;
+    padding: 4px;
+    text-decoration: none;
+  }
+  .inside-hero-header > div {
+    gap: 5px;
+  }
+}
+@media (max-width: 700px) {
+  .inside-hero-header .inside-hero-brand { flex-shrink:0; gap:5px; white-space:nowrap; }
+  .inside-hero-header .inside-hero-brand strong { font-size:18px; }
+  .inside-hero-header .inside-hero-brand svg { width:17px; }
+  .inside-hero-header .inside-hero-lab { padding:8px 10px; white-space:nowrap; }
+  .inside-hero-header a.inside-hero-skip { white-space:nowrap; font-size:8px; }
+}

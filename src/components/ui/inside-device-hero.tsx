@@ -242,6 +242,12 @@ export default function InsideDeviceHero(props: Props) {
             <small>Digital Twin Studio</small>
           </a>
           <div>
+            <a href="/coming-soon" className="inside-hero-skip">
+              Automotive ↗
+            </a>
+            <a href="/build" className="inside-hero-skip">
+              Guided builder
+            </a>
             <button onClick={props.onStartProduct} className="inside-hero-skip">
               Bring your product
             </button>
@@ -250,6 +256,9 @@ export default function InsideDeviceHero(props: Props) {
             </button>
           </div>
         </header>
+        <a className="hero-model-credit" href="/credits">
+          iPhone exterior by MajdyModels · schematic internals
+        </a>
         <div className="inside-hero-word" aria-hidden="true">
           {"INSIDE".split("").map((letter, index) => (
             <span key={index} style={{ animationDelay: `${index * 0.07}s` }}>
@@ -273,7 +282,7 @@ export default function InsideDeviceHero(props: Props) {
           )}
         </div>
         <div className="inside-hero-device-label" aria-hidden="true">
-          <span>DT–01</span>
+          <span>{active === 0 ? "iPhone 17 Pro Max" : "Schematic study"}</span>
           <small>
             {active === 2
               ? "EXPLODED ASSEMBLY"
@@ -283,7 +292,9 @@ export default function InsideDeviceHero(props: Props) {
                   ? "DEPENDENCY NETWORK"
                   : active === 4
                     ? "FAILURE PREVIEW"
-                    : "GENERIC SMARTPHONE"}
+                    : active === 0
+                      ? "ARTIST EXTERIOR"
+                      : "EDUCATIONAL ASSEMBLY"}
           </small>
         </div>
         <div className="inside-hero-copy" key={active}>
@@ -405,7 +416,11 @@ export default function InsideDeviceHero(props: Props) {
             {reduced ? "CHOOSE A CHAPTER TO EXPLORE" : "SCROLL TO LOOK INSIDE"}
             <ArrowDown size={13} />
           </span>
-          <small>PROCEDURAL MODEL / EDUCATIONAL DEMO</small>
+          <small>
+            {active === 0
+              ? "ARTIST EXTERIOR / IPHONE 17 PRO MAX"
+              : "SCHEMATIC INTERNALS / EDUCATIONAL DEMO"}
+          </small>
           <span>
             {String(active + 1).padStart(2, "0")} <i>/ 06</i>
           </span>

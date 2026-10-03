@@ -1,6 +1,6 @@
 # Inside / Digital Twin Studio
 
-An interactive educational product twin built with Next.js, React, TypeScript, React Three Fiber, Drei and Zustand. The included smartphone is a **procedural teaching model**, not manufacturer CAD. Its component relationships and repair information are labeled as demo data.
+An interactive educational product twin built with Next.js, React, TypeScript, React Three Fiber, Drei and Zustand. The iPhone demo pairs an artist-made exterior with schematic educational internals; it is not manufacturer CAD. Component relationships and repair information are labeled as demo data.
 
 ## Run locally
 
@@ -40,6 +40,7 @@ To use an installed Edge browser instead of downloading Chromium, set `PLAYWRIGH
 - Deterministic failure/degradation propagation, structured what-if queries, baseline comparison, reset, undo and up to 20 session scenarios.
 - Structured repair context, component-linked inspection steps, professional-service warnings, replacement requirements and explainable compatibility checks.
 - A clearly labeled, deterministic local assistant grounded in the current product, selection, relationships, simulation, viewer state and repair context. Safe context actions require a click.
+- A community device builder, locally saved repair outcome log, animated product landing page and assembled Aston Martin Vulcan preview.
 - Product JSON import/export from the navigator. Invalid definitions do not replace the current product. Missing/corrupt GLTF assets or invalid node mappings fall back to procedural geometry with an explicit notice.
 
 ## Architecture
@@ -69,6 +70,8 @@ The schema is category-independent. The built-in data and appearance markings de
 ## Add a GLTF/GLB model
 
 Place a model in `public/models/` and set `model3D` to `{ "type": "gltf", "url": "/models/device.glb" }`. HTTPS assets are also supported if the host permits CORS. Add each logical component's exact node names to `modelNodeIds`; names are not inferred from component labels. One component may map to multiple nodes. Assign each node to only one logical component. Use non-overlapping node roots when configuring explosion; an ancestor and descendant both mapped for motion can compound offsets.
+
+The bundled iPhone exterior is credited under CC BY 4.0 on `/credits`. The Aston Martin model was supplied without author or redistribution license information; establish permission before publishing or redistributing that asset. Its preview is an assembled exterior only.
 
 Use scene units consistent with the fallback geometry and exploded offsets. Procedural geometry remains required as a fallback. Skinned models, CAD conversion, compressed asset pipelines and automatic scale normalization are not implemented. No copyrighted CAD assets are bundled.
 

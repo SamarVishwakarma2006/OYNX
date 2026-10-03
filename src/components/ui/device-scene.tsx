@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Suspense,
   useEffect,
   useMemo,
   useRef,
@@ -15,8 +16,11 @@ import {
   LineSegments,
   BufferAttribute,
   LineBasicMaterial,
+  Shape,
+  ExtrudeGeometry,
 } from "three";
 import { smartphone } from "../../data/smartphone";
+import { AssetModel } from "../AssetModel";
 import { PartDetail } from "../PartDetail";
 import type { Component } from "../../lib/product";
 import { poseAt, heroSimulation } from "./device-timeline";
@@ -35,10 +39,45 @@ function DevicePart({
 }: { part: Component } & Pick<Props, "coordinate" | "selected">) {
   const group = useRef<Group>(null);
   const material = useRef<MeshStandardMaterial>(null);
+  const shell = useMemo(() => {
+    if (part.id !== "housing" && part.id !== "display") return null;
+    const [width, height, depth] = part.geometry.size;
+    const x = -width / 2,
+      y = -height / 2;
+    const radius = Math.min(width, height) * 0.09;
+    const shape = new Shape();
+    shape.moveTo(x + radius, y);
+    shape.lineTo(x + width - radius, y);
+    shape.quadraticCurveTo(x + width, y, x + width, y + radius);
+    shape.lineTo(x + width, y + height - radius);
+    shape.quadraticCurveTo(
+      x + width,
+      y + height,
+      x + width - radius,
+      y + height,
+    );
+    shape.lineTo(x + radius, y + height);
+    shape.quadraticCurveTo(x, y + height, x, y + height - radius);
+    shape.lineTo(x, y + radius);
+    shape.quadraticCurveTo(x, y, x + radius, y);
+    const bevel = Math.min(depth / 6, 0.025);
+    const geometry = new ExtrudeGeometry(shape, {
+      depth: depth - bevel * 2,
+      bevelEnabled: true,
+      bevelSize: bevel,
+      bevelThickness: bevel,
+      bevelSegments: 3,
+      curveSegments: 12,
+    });
+    geometry.translate(0, 0, -depth / 2 + bevel);
+    return geometry;
+  }, [part]);
+  useEffect(() => () => shell?.dispose(), [shell]);
   useFrame(() => {
     if (!group.current || !material.current) return;
     const pose = poseAt(coordinate.current);
-    const opacity = part.geometry.exterior ? pose[6] : 1;
+    const reveal = Math.min(1, Math.max(0, coordinate.current * 3));
+    const opacity = (part.geometry.exterior ? pose[6] : 1) * reveal;
     group.current.position.set(
       ...(part.geometry.position.map(
         (p, i) => p + part.geometry.explodedOffset[i] * pose[5],
@@ -64,21 +103,28 @@ function DevicePart({
     if (part.id === selected)
       material.current.emissiveIntensity += highlighted * 0.45;
   });
+  const surface = (
+    <meshStandardMaterial
+      ref={material}
+      color={part.id === "housing" ? "#556477" : part.geometry.color}
+      metalness={part.geometry.exterior ? 0.8 : 0.35}
+      roughness={part.geometry.exterior ? 0.23 : 0.46}
+      transparent
+    />
+  );
   return (
     <group ref={group} position={part.geometry.position}>
-      <RoundedBox
-        args={part.geometry.size}
-        radius={Math.min(...part.geometry.size) / 3}
-        smoothness={4}
-      >
-        <meshStandardMaterial
-          ref={material}
-          color={part.id === "housing" ? "#556477" : part.geometry.color}
-          metalness={part.geometry.exterior ? 0.8 : 0.35}
-          roughness={part.geometry.exterior ? 0.23 : 0.46}
-          transparent
-        />
-      </RoundedBox>
+      {shell ? (
+        <mesh geometry={shell}>{surface}</mesh>
+      ) : (
+        <RoundedBox
+          args={part.geometry.size}
+          radius={Math.min(...part.geometry.size) / 3}
+          smoothness={4}
+        >
+          {surface}
+        </RoundedBox>
+      )}
       <PartDetail component={part} opacity={1} />
     </group>
   );
@@ -159,6 +205,13 @@ function Assembly({ coordinate, selected, onFailure }: Props) {
   });
   return (
     <group ref={group}>
+      <Suspense fallback={null}>
+        <AssetModel
+          url="/models/iphone-17-pro-max.glb"
+          phone
+          opacity={() => 1 - Math.min(1, Math.max(0, coordinate.current * 3))}
+        />
+      </Suspense>
       {smartphone.components.map((part) => (
         <DevicePart
           key={part.id}

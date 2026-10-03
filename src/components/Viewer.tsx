@@ -9,6 +9,7 @@ import {
 import {
   ContactShadows,
   Grid,
+  Html,
   OrbitControls,
   RoundedBox,
   useGLTF,
@@ -18,6 +19,7 @@ import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { useWorkspace } from "../lib/store";
 import type { Component } from "../lib/product";
 import { ErrorBoundary } from "./ErrorBoundary";
+import { AssetModel } from "./AssetModel";
 import { PartDetail } from "./PartDetail";
 import { componentForNode, prepareModel } from "../lib/model";
 
@@ -120,9 +122,21 @@ function Part({ component: c }: { component: Component }) {
         emissiveIntensity={selected ? 0.4 : hovered ? 0.2 : 0}
       />
       <PartDetail component={c} opacity={opacity} />
+      {s.mode === "Exploded" && selected && visible && (
+        <Html
+          center
+          position={[0, c.geometry.size[1] / 2 + 0.3, 0]}
+          style={{ pointerEvents: "none", whiteSpace: "nowrap" }}
+        >
+          <span className="badge">
+            {c.name} · {c.evidence?.status ?? "illustrative"}
+          </span>
+        </Html>
+      )}
     </RoundedBox>
   );
 }
+
 function ImportedModel() {
   const s = useWorkspace();
   const [hovered, setHovered] = useState<string | null>(null);
@@ -218,7 +232,7 @@ function ImportedModel() {
 }
 function CameraRig() {
   const s = useWorkspace();
-  const { camera, scene } = useThree();
+  const { camera, scene, size: viewportSize } = useThree();
   const controls = useRef<OrbitControlsImpl>(null);
   const goal = useRef<{ position: Vector3; target: Vector3 } | null>(null);
   useEffect(() => {
@@ -237,24 +251,57 @@ function CameraRig() {
         size = box.getSize(new Vector3()).length();
       }
     }
+    if (!c) {
+      const bounds = new Box3();
+      for (const part of s.product.components) {
+        const center = new Vector3(
+          ...positionOf(part, s.mode, s.explosionFactor, s.explosionGroup),
+        );
+        const half = new Vector3(...part.geometry.size).multiplyScalar(0.5);
+        bounds.expandByPoint(center.clone().add(half));
+        bounds.expandByPoint(center.clone().sub(half));
+      }
+      target = bounds.getCenter(new Vector3());
+      size = bounds.getSize(new Vector3()).length();
+    }
+    const aspect = viewportSize.width / viewportSize.height;
+    const fitDistance =
+      size /
+      (2 *
+        Math.sin(
+          Math.atan(Math.tan((21 * Math.PI) / 180) * Math.min(1, aspect)),
+        ));
     goal.current = {
       target,
       position: target
         .clone()
         .add(
-          new Vector3(0.6, 0.35, 1)
+          new Vector3(
+            s.cameraView === "front"
+              ? 0
+              : s.cameraView === "rear"
+                ? 0
+                : s.cameraView === "top"
+                  ? 0
+                  : 0.6,
+            s.cameraView === "top" ? 1 : s.cameraView === "iso" ? 0.35 : 0,
+            s.cameraView === "rear" ? -1 : s.cameraView === "top" ? 0.001 : 1,
+          )
             .normalize()
-            .multiplyScalar(c ? Math.max(size * 2.2, 3) : 11),
+            .multiplyScalar(c ? Math.max(size * 2.2, 3) : fitDistance * 1.12),
         ),
     };
   }, [
     s.cameraVersion,
+    s.cameraView,
     s.focusedComponentId,
     s.product,
     s.mode,
     s.explosionFactor,
     s.explosionGroup,
     scene,
+    viewportSize.width,
+    viewportSize.height,
   ]);
   useFrame((_, dt) => {
     if (!goal.current || !controls.current) return;
@@ -272,7 +319,7 @@ function CameraRig() {
       ref={controls}
       makeDefault
       minDistance={1.5}
-      maxDistance={35}
+      maxDistance={70}
       enableDamping
       onStart={() => {
         goal.current = null;
@@ -288,7 +335,31 @@ function Scene() {
       <directionalLight position={[5, 8, 8]} intensity={3} />
       <directionalLight position={[-5, 0, 4]} intensity={1.5} />
       <group rotation={[0, 0, 0]}>
-        {s.product.model3D.type === "gltf" && s.product.model3D.url ? (
+        {s.product.model3D.exteriorUrl &&
+        s.mode === "Explore" &&
+        !s.focusedComponentId &&
+        !s.isolatedComponentId &&
+        !s.hiddenComponentIds.length ? (
+          <ErrorBoundary
+            fallback={
+              <group>
+                {s.product.components.map((c) => (
+                  <Part key={c.id} component={c} />
+                ))}
+              </group>
+            }
+          >
+            <Suspense
+              fallback={
+                <Html center>
+                  <span className="badge">Loading iPhone exterior…</span>
+                </Html>
+              }
+            >
+              <AssetModel url={s.product.model3D.exteriorUrl} phone />
+            </Suspense>
+          </ErrorBoundary>
+        ) : s.product.model3D.type === "gltf" && s.product.model3D.url ? (
           <ErrorBoundary
             key={s.product.model3D.url}
             onError={() =>
@@ -327,8 +398,8 @@ function Scene() {
         args={[30, 30]}
         cellSize={1}
         cellThickness={0.5}
-        cellColor="#384551"
-        sectionColor="#536274"
+        cellColor={s.mode === "Exploded" ? "#d8dde3" : "#384551"}
+        sectionColor={s.mode === "Exploded" ? "#b7c1cc" : "#536274"}
         sectionSize={5}
         fadeDistance={22}
         infiniteGrid

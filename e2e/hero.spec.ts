@@ -17,7 +17,7 @@ test("reduced motion keeps chapters and product intake accessible", async ({
     .getByRole("button", { name: "Explore dependencies", exact: true })
     .click();
   await expect(
-    page.getByRole("button", { name: "Dependencies", exact: true }),
+    page.getByRole("button", { name: /Dependencies$/ }),
   ).toHaveAttribute("aria-pressed", "true");
   await page.getByRole("button", { name: "Back to product input" }).click();
   await page

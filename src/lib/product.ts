@@ -67,6 +67,12 @@ export const componentSchema = z.object({
   modelNodeIds: z.array(z.string()).min(1),
   technicalSpecifications: z.record(z.string(), z.string()),
   provenance: provenanceSchema,
+  evidence: z
+    .object({
+      status: z.enum(["observed", "inferred", "unknown"]),
+      note: z.string().max(2000),
+    })
+    .optional(),
   factSources: z.record(z.string(), provenanceSchema).default({}),
   failureModes: z.array(z.enum(failureTypes)).min(1),
   safetyNotes: z.array(z.string()),
@@ -117,6 +123,10 @@ export const productSchema = z.object({
   description: z.string(),
   images: z.array(z.string()),
   model3D: z.object({
+    exteriorUrl: z
+      .string()
+      .regex(/^\/[^/]/)
+      .optional(),
     type: z.enum(["procedural", "gltf"]),
     url: z
       .string()

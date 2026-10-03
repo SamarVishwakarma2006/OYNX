@@ -25,6 +25,60 @@ const Viewer = dynamic(() => import("./Viewer"), {
   ssr: false,
   loading: () => <div className="empty">Loading the 3D renderer…</div>,
 });
+
+function ExplodedRegistry() {
+  const s = useWorkspace();
+  const selected = s.product.components.find(
+    (part) => part.id === s.selectedComponentId,
+  );
+  return (
+    <div className="exploded-registry">
+      <div className="registry-heading">
+        <span className="eyebrow">INSPECT / ASSEMBLIES</span>
+        <span>{s.product.components.length} PARTS</span>
+      </div>
+      {selected ? (
+        <div className="registry-selected">
+          <strong>{selected.name}</strong>
+          <span>
+            {selected.category.toUpperCase()} ·{" "}
+            {selected.evidence?.status ?? "illustrative"}
+          </span>
+        </div>
+      ) : (
+        <div className="registry-empty">
+          <strong>No component selected</strong>
+          <span>Select a part in the 3D view or choose it below.</span>
+        </div>
+      )}
+      <p className="registry-label">
+        {s.product.name.split("·")[0].trim()} ASSEMBLIES{" "}
+        <span>SELECT TO INSPECT</span>
+      </p>
+      <div className="registry-list">
+        {s.product.components.map((part) => (
+          <button
+            key={part.id}
+            aria-pressed={s.selectedComponentId === part.id}
+            onClick={() => s.select(part.id)}
+          >
+            <span
+              className="component-dot"
+              style={{ background: part.geometry.color }}
+            />
+            <span>{part.name}</span>
+            <small>{part.category.replaceAll("_", " ").toUpperCase()}</small>
+          </button>
+        ))}
+      </div>
+      {selected && <p className="registry-note">{selected.description}</p>}
+      <button className="registry-clear" onClick={() => s.select(null)}>
+        Click empty space in 3D to clear selection
+      </button>
+    </div>
+  );
+}
+
 export function Workspace({ onBack }: { onBack: () => void }) {
   const s = useWorkspace();
   const [search, setSearch] = useState("");
@@ -74,7 +128,10 @@ export function Workspace({ onBack }: { onBack: () => void }) {
     }
   }
   return (
-    <div ref={root} className={`workspace ${light ? "light" : ""}`}>
+    <div
+      ref={root}
+      className={`workspace ${light ? "light" : ""} ${s.mode === "Exploded" ? "exploded-workspace" : ""}`}
+    >
       <header className="workspace-header">
         <button
           className="icon-button"
@@ -99,6 +156,11 @@ export function Workspace({ onBack }: { onBack: () => void }) {
           {s.product.dataSources[0].sourceType.toUpperCase()} DATA
         </span>
         <div className="header-actions">
+          <a href="/build">Builder</a>
+          <a href={`/impact?product=${encodeURIComponent(s.product.name)}`}>
+            Repair log
+          </a>
+          <a href="/coming-soon">Automotive</a>
           <button aria-label="Command search" onClick={() => setPalette(true)}>
             <Command size={16} />
             <span>Search</span>
@@ -256,6 +318,16 @@ export function Workspace({ onBack }: { onBack: () => void }) {
               </span>
               <h2>{c?.name ?? "The whole, in its parts."}</h2>
               <p>
+                {s.product.model3D.exteriorUrl && (
+                  <span className="badge">
+                    {s.mode === "Explore" &&
+                    !s.focusedComponentId &&
+                    !s.isolatedComponentId &&
+                    !s.hiddenComponentIds.length
+                      ? "Supplied exterior · artist model"
+                      : "Schematic internals · not iPhone service CAD"}
+                  </span>
+                )}
                 {s.mode === "Dependencies"
                   ? "Select a node to inspect its relationships."
                   : "Drag to rotate · Scroll to zoom · Right-drag to pan"}
@@ -289,7 +361,7 @@ export function Workspace({ onBack }: { onBack: () => void }) {
             ) : s.mode === "Exploded" ? (
               <>
                 <label>
-                  Explosion{" "}
+                  EXPLODED VIEW{" "}
                   <input
                     aria-label="Explosion factor"
                     type="range"
@@ -305,6 +377,26 @@ export function Workspace({ onBack }: { onBack: () => void }) {
                   />
                   <output>{Math.round(s.explosionFactor * 100)}%</output>
                 </label>
+                <div className="camera-views" aria-label="Camera view">
+                  {(["iso", "front", "rear", "top"] as const).map((view) => (
+                    <button
+                      key={view}
+                      aria-pressed={s.cameraView === view}
+                      onClick={() => s.setCameraView(view)}
+                    >
+                      {view.toUpperCase()}
+                    </button>
+                  ))}
+                </div>
+                <button
+                  onClick={() =>
+                    useWorkspace.setState({
+                      explosionFactor: s.explosionFactor > 0 ? 0 : 1,
+                    })
+                  }
+                >
+                  {s.explosionFactor > 0 ? "Reassemble" : "Explode all"}
+                </button>
                 <select
                   aria-label="Explosion group"
                   value={s.explosionGroup}
@@ -361,7 +453,7 @@ export function Workspace({ onBack }: { onBack: () => void }) {
               aria-pressed={!assistant}
               onClick={() => setAssistant(false)}
             >
-              Inspector
+              {s.mode === "Exploded" ? "Parts" : "Inspector"}
             </button>
             <button aria-pressed={assistant} onClick={() => setAssistant(true)}>
               Ask Inside ↗
@@ -375,7 +467,9 @@ export function Workspace({ onBack }: { onBack: () => void }) {
               />
             </div>
             <div hidden={assistant}>
-              {s.mode === "Simulation" ? (
+              {s.mode === "Exploded" ? (
+                <ExplodedRegistry />
+              ) : s.mode === "Simulation" ? (
                 <SimulationPanel />
               ) : s.mode === "Repair" ? (
                 <RepairPanel />
@@ -390,7 +484,9 @@ export function Workspace({ onBack }: { onBack: () => void }) {
         <span>
           <span className="status-dot" /> WORKSPACE READY
         </span>
-        <span>Illustrative data · Not a manufacturer service manual</span>
+        <span>
+          Illustrative data · <a href="/credits">Model credits & evidence</a>
+        </span>
         <span>
           {s.product.components.length} COMPONENTS /{" "}
           {s.product.dependencies.length} RELATIONSHIPS

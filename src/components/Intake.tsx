@@ -11,6 +11,7 @@ import {
 } from "../lib/providers";
 import { validateImage } from "../lib/upload";
 import { smartphone } from "../data/smartphone";
+import { iphone } from "../data/iphone";
 import { useWorkspace, type Mode } from "../lib/store";
 
 export function Intake({ onOpen }: { onOpen: () => void }) {
@@ -90,9 +91,13 @@ export function Intake({ onOpen }: { onOpen: () => void }) {
       setBusy(false);
     }
   }
-  function openDemo(mode: Mode = "Explore", componentId?: string) {
+  function openDemo(
+    mode: Mode = "Explore",
+    componentId?: string,
+    product = iphone,
+  ) {
     const state = useWorkspace.getState();
-    if (state.product !== smartphone) state.loadProduct(smartphone);
+    if (state.product !== product) state.loadProduct(product);
     useWorkspace.getState().restore();
     useWorkspace.getState().setMode(mode);
     if (componentId) useWorkspace.getState().focus(componentId);
@@ -262,7 +267,10 @@ export function Intake({ onOpen }: { onOpen: () => void }) {
                   <li key={stage}>{stage}</li>
                 ))}
               </ul>
-              <button className="primary wide" onClick={() => openDemo()}>
+              <button
+                className="primary wide"
+                onClick={() => openDemo("Explore", undefined, smartphone)}
+              >
                 Use educational demo model →
               </button>
             </div>

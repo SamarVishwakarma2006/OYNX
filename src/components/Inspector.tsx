@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Link from "next/link";
 import { useWorkspace } from "../lib/store";
 import { DependencyGraph } from "../lib/graph";
 import { analyzeCompatibility } from "../lib/compatibility";
@@ -9,6 +10,18 @@ import type { Component, FailureType } from "../lib/product";
 function Sources({ component: c }: { component: Component }) {
   return (
     <div className="source-note">
+      <strong className="badge">
+        Evidence:{" "}
+        {c.evidence?.status ??
+          (c.provenance.sourceType === "demo" ||
+          c.provenance.sourceType === "inferred"
+            ? "inferred / illustrative"
+            : "unknown")}
+      </strong>
+      <p>
+        {c.evidence?.note ??
+          "No direct observation supplied for this component."}
+      </p>
       <span className="badge">
         {c.provenance.sourceType.toUpperCase()} DATA ·{" "}
         {c.provenance.verified ? "VERIFIED" : "UNVERIFIED"}
@@ -411,6 +424,11 @@ export function RepairPanel() {
         ))}
       </ul>
       <p className="caption">Category: {c.repair.category}</p>
+      <Link className="repair-automotive-card" href="/coming-soon">
+        <span className="eyebrow">NEXT / AUTOMOTIVE</span>
+        <strong>Continue with the Aston Martin Vulcan</strong>
+        <span>Assembled 3D preview · component twin coming soon ↗</span>
+      </Link>
     </div>
   );
 }

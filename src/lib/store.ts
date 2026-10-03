@@ -23,6 +23,7 @@ type State = {
   isolatedComponentId: string | null;
   focusedComponentId: string | null;
   cameraVersion: number;
+  cameraView: "iso" | "front" | "rear" | "top";
   activeSimulation: Simulation | null;
   simulationHistory: Simulation[];
   compareBefore: boolean;
@@ -40,6 +41,7 @@ type State = {
   restore: () => void;
   toggleHidden: (id: string) => void;
   resetCamera: () => void;
+  setCameraView: (view: State["cameraView"]) => void;
   simulate: (id: string, type?: FailureType) => void;
   applySimulation: (s: Simulation) => void;
   resetSimulation: () => void;
@@ -57,6 +59,7 @@ export const useWorkspace = create<State>((set, get) => ({
   isolatedComponentId: null,
   focusedComponentId: null,
   cameraVersion: 0,
+  cameraView: "iso",
   activeSimulation: null,
   simulationHistory: [],
   compareBefore: false,
@@ -115,6 +118,13 @@ export const useWorkspace = create<State>((set, get) => ({
   resetCamera: () =>
     set((s) => ({
       focusedComponentId: null,
+      cameraView: "iso",
+      cameraVersion: s.cameraVersion + 1,
+    })),
+  setCameraView: (cameraView) =>
+    set((s) => ({
+      cameraView,
+      focusedComponentId: null,
       cameraVersion: s.cameraVersion + 1,
     })),
   simulate: (id, type) => {
@@ -163,6 +173,7 @@ export const useWorkspace = create<State>((set, get) => ({
       simulationHistory: [],
       activeRepairStep: 0,
       compareBefore: false,
+      cameraView: "iso",
       dependencyFilters: [],
       explosionGroup: "all",
       cameraVersion: s.cameraVersion + 1,
