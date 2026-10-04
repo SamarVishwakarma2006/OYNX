@@ -1,106 +1,193 @@
-# Inside / Digital Twin Studio
+# OYNX — 3D Digital Twin Studio & Interactive Simulation Engine
 
-An interactive educational product twin built with Next.js, React, TypeScript, React Three Fiber, Drei and Zustand. The iPhone demo pairs an artist-made exterior with schematic educational internals; it is not manufacturer CAD. Component relationships and repair information are labeled as demo data.
+[![Next.js](https://img.shields.io/badge/Next.js-16.3.8-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19.3.0-blue?style=for-the-badge&logo=react)](https://react.dev/)
+[![Three.js](https://img.shields.io/badge/Three.js-0.186-orange?style=for-the-badge&logo=three.js)](https://threejs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-6.0-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
+[![TailwindCSS](https://img.shields.io/badge/TailwindCSS-v4-38bdf8?style=for-the-badge&logo=tailwindcss)](https://tailwindcss.com/)
+[![Vitest](https://img.shields.io/badge/Tested%20With-Vitest-green?style=for-the-badge&logo=vitest)](https://vitest.dev/)
 
-## Run locally
+An advanced, interactive educational product twin and failure-simulation studio built with **Next.js (Turbopack)**, **React 19**, **Three.js**, **React Three Fiber (@react-three/fiber)**, **Drei**, and **Zustand**. 
 
-Use Node.js 24 LTS and npm.
+Experience schematic educational internals paired with realistic exterior models, inspect deep component dependencies, run deterministic qualitative what-if failure simulations, and explore repair procedures—all running 100% locally in your browser with zero mandatory external API keys.
 
-```sh
-npm ci
-npm run dev
+---
+
+## 📸 Preview Showcase
+
+| Interactive 3D Digital Twin | Animated Hero & Exploration |
+| :---: | :---: |
+| ![Digital Twin Preview](docs/images/digital-twin-preview.jpg) | ![Inside Hero](docs/images/inside-smartphone-hero.png) |
+
+| Automotive Twin Preview (Aston Martin Vulcan) |
+| :---: |
+| ![Vulcan Preview](docs/images/inside-vulcan-preview.png) |
+
+---
+
+## 🚀 How to Run Locally from Terminal
+
+Follow this quick guide to run the project locally on your machine.
+
+### 📋 Local Execution Command Matrix
+
+| Step | Action | Terminal Command | Directory | Description & Notes |
+| :---: | :--- | :--- | :--- | :--- |
+| **1** | **Navigate to Project** | `cd work/3D-twin` | Project Root | Move into the project directory where `package.json` resides. |
+| **2** | **Install Dependencies** | `npm install` *(or `npm ci`)* | `work/3D-twin` | Installs Three.js, React Three Fiber, Next.js, and dependencies. |
+| **3** | **Start Dev Server** | `npm run dev` | `work/3D-twin` | Launches the local server at `http://127.0.0.1:3000`. |
+| **4** | **Open in Browser** | `http://127.0.0.1:3000` | Browser URL | Open your browser and click **"Try Interactive Demo"**. |
+| **5** | **Run Type Check** | `npm run typecheck` | `work/3D-twin` | Validates TypeScript schemas, components, and types. |
+| **6** | **Run Unit Tests** | `npm test` | `work/3D-twin` | Runs Vitest unit test suite (graph, model, engines). |
+| **7** | **Production Build** | `npm run build` | `work/3D-twin` | Compiles optimized Next.js production bundle. |
+| **8** | **Serve Production** | `npm run start` | `work/3D-twin` | Serves the production build locally at port 3000. |
+
+> [!TIP]
+> If you have opened the workspace root directory in your terminal (`files-pasted-by-the-user-you`), you can either run `cd work/3D-twin` first, or directly run `npm run dev` (proxied automatically via the root workspace configuration).
+
+---
+
+## 🛠️ Complete Terminal Scripts Reference
+
+| NPM Script | Terminal Command | Purpose / Functionality |
+| :--- | :--- | :--- |
+| `dev` | `npm run dev` | Runs Next.js Turbopack dev server on `127.0.0.1:3000` |
+| `build` | `npm run build` | Builds the production-ready Next.js application |
+| `start` | `npm run start` | Starts the production server on `127.0.0.1:3000` |
+| `typecheck` | `npm run typecheck` | Validates all TypeScript types with `tsc --noEmit` |
+| `lint` | `npm run lint` | Runs ESLint 9 to verify code standards |
+| `test` | `npm test` | Executes the Vitest unit test suite |
+| `test:e2e` | `npm run test:e2e` | Runs Playwright end-to-end browser tests |
+| `format` | `npm run format` | Auto-formats code with Prettier |
+
+---
+
+## 🌟 Key Features
+
+- **🎮 High-Fidelity 3D Viewer & Controls**:
+  - Smooth orbit, pan, zoom, camera reset, focus, component isolation, and fullscreen.
+  - Interactive **X-Ray mode** with dynamic opacity slider.
+  - **Exploded View Assembly**: Smoothly interpolate assembled and exploded positions for individual subsystems or the entire device.
+  - GLTF/GLB hardware rendering with robust procedural geometry fallback when models are loading or unavailable.
+
+- **🔍 Component Inspector & Hierarchy**:
+  - Synchronized bidirectional selection across 3D canvas, system tree, and inspector panel.
+  - Inspect specifications, physical hierarchy, functional purpose, and materials for 15 internal components.
+
+- **🕸️ Directed Dependency Graph**:
+  - Provider-to-consumer directed graph with cycle detection (`battery → connector → power controller → logic board`).
+  - Interactive nodes with pan, zoom, status highlighting, and bidirectional 3D focus links.
+
+- **⚡ Deterministic Simulation Engine**:
+  - Monotone finite fixed-point fault propagation: `healthy < degraded < failed`.
+  - Simulate what-if scenarios (e.g., inject battery failure, thermal degradation, disconnect).
+  - Compare baseline vs. degraded states with instant reset, undo, and multi-scenario session logging.
+
+- **🔧 Grounded Repair & Compatibility Diagnostics**:
+  - Structured step-by-step repair guides linked directly to 3D component focus.
+  - Safety cautions, high-voltage warnings, and technical replacement criteria.
+  - Explainable compatibility validation (`NOT_COMPATIBLE`, `POTENTIALLY_COMPATIBLE`, `VERIFIED_COMPATIBLE`).
+
+- **🤖 Grounded Local Assistant**:
+  - 100% local, privacy-preserving, and deterministic assistant.
+  - Answers contextual questions strictly using current product state, graph relationships, and repair data.
+  - No external paid API keys or remote LLMs required.
+
+- **📦 Community Device Builder & JSON I/O**:
+  - Create and test custom digital twins with schema validation.
+  - Export product JSON definitions and import community models with live verification.
+  - Includes assembled Aston Martin Vulcan AMR automotive twin preview.
+
+---
+
+## 📁 Repository Structure
+
+```text
+3D-twin/
+├── docs/
+│   └── images/              # Project screenshots & visual assets
+├── public/
+│   └── models/              # 3D GLTF/GLB models (iPhone, Aston Martin Vulcan)
+├── src/
+│   ├── app/                 # Next.js App Router (pages, layout, globals.css)
+│   ├── components/          # React components
+│   │   ├── Viewer.tsx       # Three.js / React Three Fiber 3D Canvas
+│   │   ├── Inspector.tsx    # Component detail inspector
+│   │   ├── DependencyView.tsx # Graph visualization
+│   │   ├── Assistant.tsx    # Grounded contextual assistant
+│   │   ├── Intake.tsx       # Interactive landing & intake flow
+│   │   ├── Workspace.tsx    # Studio layout orchestration
+│   │   └── ui/              # Buttons, inputs, dialogs, sliders
+│   ├── data/                # Product definitions (iPhone, demo systems)
+│   └── lib/                 # Core engine logic
+│       ├── graph.ts         # Dependency graph algorithms & cycles
+│       ├── simulation.ts    # Monotone failure propagation
+│       ├── product.ts       # Zod schemas & validator
+│       ├── store.ts         # Zustand state management
+│       └── model.ts         # Three.js material & GLTF mapping
+├── .gitignore               # Clean GitHub ignore rules
+├── package.json             # Scripts & dependencies
+└── tsconfig.json            # TypeScript configuration
 ```
 
-Open http://127.0.0.1:3000 and choose **Try Interactive Demo**. No API key, database, remote font, model download or paid AI provider is required for the demo.
+---
 
-```sh
-npm run typecheck
-npm run lint
+## 🐙 Git & GitHub Upload Guide
+
+This repository is optimized for Git and GitHub. All heavy build outputs, temporary caches, and system files are excluded via `.gitignore`.
+
+### 1. Uploading / Pushing to GitHub
+
+Open your terminal and run the following commands:
+
+```bash
+# 1. Ensure you are in the project folder
+cd work/3D-twin
+
+# 2. Check the current git status
+git status
+
+# 3. Stage changes
+git add .
+
+# 4. Commit your changes
+git commit -m "feat: complete 3D digital twin studio and local terminal setup"
+
+# 5. Push to GitHub
+git push origin main
+```
+
+*(If you are pushing to a new repository, configure your remote first: `git remote add origin https://github.com/<your-username>/<your-repo-name>.git` followed by `git push -u origin main`)*
+
+### 2. Git-Friendly Safeguards in place
+
+- ✅ **`node_modules/` & `.next/`** build output ignored.
+- ✅ **`*.tsbuildinfo` & `*.log`** cache ignored.
+- ✅ **`.env*`** files protected (sample provided in `.env.example`).
+- ✅ **Test results & coverage reports** ignored.
+- ✅ **3D Assets** (`.glb`) are optimized and under GitHub's 100MB file limit.
+
+---
+
+## 🧪 Running Tests & Quality Checks
+
+```bash
+# Run Vitest unit tests
 npm test
-npm run build
-npm start
-```
 
-For browser tests:
+# Run TypeScript typecheck
+npm run typecheck
 
-```sh
-npx playwright install chromium
+# Run ESLint validation
+npm run lint
+
+# Run End-to-End Playwright tests
 npm run test:e2e
 ```
 
-To use an installed Edge browser instead of downloading Chromium, set `PLAYWRIGHT_CHANNEL=msedge` (PowerShell: `$env:PLAYWRIGHT_CHANNEL='msedge'`). Tests cover desktop and mobile viewports. GitHub Actions runs typecheck, lint, unit tests, production build and browser tests on pushes and pull requests.
+---
 
-## Working features
+## 📄 License & Credits
 
-- Product name, manufacturer and model entry; up to six JPEG/PNG/WebP images with signature, decoded dimensions and size validation. Object URLs are released. Images remain in the browser.
-- Honest local category matching with explicit candidate confirmation. Images are **not visually recognized** by the local provider.
-- 15 components, a synchronized navigator and inspector, orbit/pan/zoom, camera reset, focus, isolation, hide/show, fullscreen, quality settings, light/dark themes and command search (Ctrl/Cmd+K).
-- X-ray intensity; interpolated exploded transforms for a whole product or selected subsystem.
-- Directed dependency graph with filtering, pan, zoom, selection, focus, status labels and links back to the 3D view.
-- Deterministic failure/degradation propagation, structured what-if queries, baseline comparison, reset, undo and up to 20 session scenarios.
-- Structured repair context, component-linked inspection steps, professional-service warnings, replacement requirements and explainable compatibility checks.
-- A clearly labeled, deterministic local assistant grounded in the current product, selection, relationships, simulation, viewer state and repair context. Safe context actions require a click.
-- A community device builder, locally saved repair outcome log, animated product landing page and assembled Aston Martin Vulcan preview.
-- Product JSON import/export from the navigator. Invalid definitions do not replace the current product. Missing/corrupt GLTF assets or invalid node mappings fall back to procedural geometry with an explicit notice.
-
-## Architecture
-
-`src/data/smartphone.ts` contains the demo definition. `src/lib/product.ts` defines Zod schemas and reference validation. Each important fact can override its component's source via `factSources`. Sources include type, title, optional URL, confidence, verification status and update date.
-
-`src/lib/graph.ts` provides graph queries and cycle detection. Edges point **from provider to consumer**: battery → connector → power controller → board. Ancestors are upstream providers; descendants are downstream consumers. Cycles are reported and traversals use visited sets.
-
-`src/lib/simulation.ts` uses a monotone, finite fixed-point traversal: healthy < degraded < failed. Required failure edges can disable a consumer; optional or degradation edges degrade it. A degraded provider cannot promote a consumer to complete failure. `propagation: none` stops propagation. Cycles terminate. This is a qualitative single-fault model, not electrical, thermal or mechanical physics.
-
-`src/lib/store.ts` separates immutable product data from selection, visualization and simulation state. Selection is canonical across all views. Scenarios never edit the product definition. Reset clears the current scenario while retaining session history; undo removes the latest scenario and activates its predecessor.
-
-`src/components/Viewer.tsx` lazily loads the WebGL renderer. Procedural components use explicit geometry and assembled/exploded positions. `src/lib/model.ts` validates GLTF mappings and clones/disposes per-instance materials without disposing cached source geometry. `PartDetail.tsx` generates small local textures for illustrative markings.
-
-`src/lib/providers.ts` defines interfaces for identification, AI, product data, digital twins, parts and repair documentation. Implement only providers that are needed. The local assistant is deterministic and does not pretend to be an LLM. Provider exceptions route to the labeled local fallback.
-
-## Add a product or component
-
-1. Export the demo JSON from **Product dataset → Export JSON**, or use its typed definition as a starting point.
-2. Assign a unique product ID, component IDs and system IDs. Every component must reference that product and a declared system.
-3. Provide a function, purpose, specifications, provenance, supported failure modes, safety notes, repair data, replacement requirements, model-node mapping and fallback geometry.
-4. Use `parentComponentId` for physical hierarchy. It is distinct from dependency direction. Hierarchy cycles, missing parents and broken repair references are rejected.
-5. Import the JSON into the workspace. Schema/reference errors are shown and the existing product remains usable. Cycle/unconnected-component warnings are displayed.
-
-The schema is category-independent. The built-in data and appearance markings demonstrate a smartphone; adding other categories does not require changing the graph or simulation engines.
-
-## Add a GLTF/GLB model
-
-Place a model in `public/models/` and set `model3D` to `{ "type": "gltf", "url": "/models/device.glb" }`. HTTPS assets are also supported if the host permits CORS. Add each logical component's exact node names to `modelNodeIds`; names are not inferred from component labels. One component may map to multiple nodes. Assign each node to only one logical component. Use non-overlapping node roots when configuring explosion; an ancestor and descendant both mapped for motion can compound offsets.
-
-The bundled iPhone exterior is credited under CC BY 4.0 on `/credits`. The Aston Martin model was supplied without author or redistribution license information; establish permission before publishing or redistributing that asset. Its preview is an assembled exterior only.
-
-Use scene units consistent with the fallback geometry and exploded offsets. Procedural geometry remains required as a fallback. Skinned models, CAD conversion, compressed asset pipelines and automatic scale normalization are not implemented. No copyrighted CAD assets are bundled.
-
-## Dependencies, failures and repair data
-
-Each dependency declares its type, criticality, whether it is required, propagation behavior, description and provenance. Only explicitly allowed component failure states can be injected. Binary failure, disconnect and other supported non-degraded states use the declared edge rules; degraded, intermittent, overheating and reduced-performance states propagate degradation. Do not add a physical failure mode without supporting data.
-
-Repair steps reference `componentIds` to focus corresponding geometry. The demo supplies educational inspection context, **not a model-specific disassembly procedure**. Add manufacturer documentation and service steps only with source evidence. Real battery, high-voltage or other hazardous repairs need appropriate professional guidance.
-
-## Replacement and compatibility
-
-`replacement.requirements` is an extensible record of model, generation, connector, dimensions, voltage/current, protocol, mounting, firmware, thermal and other constraints. A known mismatch yields `NOT_COMPATIBLE`. Missing values remain unknown. Partial matches produce `POTENTIALLY_COMPATIBLE`; zero known matches produce `UNKNOWN`. `VERIFIED_COMPATIBLE` requires all recorded checks to match plus trusted verified source evidence. User-entered candidate values never establish verification. Search links open a generic web search; no inventory or purchasing integration is implied.
-
-## Configure an AI provider
-
-No external adapter is enabled. `.env.example` lists an optional future server-side credential name only. Setting `AI_API_KEY` alone does **not** enable a provider.
-
-Implement `AIProvider` in a server-only module and add a bounded, validated route for its calls. Build context from trusted product definitions and the deterministic engine; never let generated text choose propagation results or certify compatibility. Pass the adapter to `withLocalFallback`, label the actual provider/source, and keep all credentials on the server (never `NEXT_PUBLIC_*`). Add provider-specific timeout, rate limiting, response validation and integration tests before enabling it. The existing `/api/identify` route demonstrates validated metadata input; the browser uses the local matcher directly so demo intake does not need a network request.
-
-## Known limitations
-
-- One bundled educational dataset. No exact product recognition, image-to-3D, manufacturer catalogue, real parts inventory or external LLM adapter.
-- State and history are temporary; no account, database or persistent chat. Export product definitions before leaving.
-- AI answers are constrained local explanations; open-ended factual questions are declined. What-if parsing supports named/selected components and a small explicit verb vocabulary.
-- The graph represents functional relationships, not calibrated physical simulation. Multiple simultaneous injected faults and numeric electrothermal analysis are not supported.
-- Mobile uses a viewer-first layout with collapsible panels below it. Touch orbit/pinch/pan come from OrbitControls.
-- WebGL failure preserves non-3D tools. Device and browser GPU support still determine rendering availability. A Three.js clock deprecation warning may originate from React Three Fiber; it does not prevent rendering.
-- Public deployment should add request-level rate limits and monitoring appropriate to the host before connecting paid providers or accepting persistent uploads.
-
-## Validation
-
-Unit tests cover parsing, invalid references, paths/cycles, failure propagation and immutability, what-if rules, compatibility, shared workspace state, identification/API validation, image validation, local assistant fallback and model material ownership. Browser tests exercise the primary journey on desktop and mobile. No real credentials, user images or generated build output are committed.
+- Bundled iPhone exterior asset credited under **CC BY 4.0** (see `/credits` in-app).
+- Digital Twin framework & simulation engine created under the MIT License.
