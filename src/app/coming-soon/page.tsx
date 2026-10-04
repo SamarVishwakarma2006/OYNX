@@ -23,27 +23,26 @@ export default function ComingSoon() {
           <em>On another scale.</em>
         </h1>
         <p>
-          Meet the Aston Martin Vulcan AMR Pro. Explore the exterior today.
-          Component-level learning is the next chapter.
+          Explore automotive digital twin architectures. Interactive 3D component
+          diagnostics and complex system simulations are in development.
         </p>
       </div>
       <CarPreview />
       <div className="studio-grid">
         <section>
-          <span className="eyebrow">01 / AVAILABLE NOW</span>
+          <span className="eyebrow">01 / CONCEPT PREVIEW</span>
           <h2>A closer look.</h2>
           <p>
-            An assembled artist model you can rotate and inspect, with its
-            supplied materials and textures.
+            An interactive procedural 3D automotive prototype you can rotate, inspect,
+            and view in real time.
           </p>
         </section>
         <section>
           <span className="eyebrow">02 / COMING SOON</span>
-          <h2>Understand the systems.</h2>
+          <h2>Powertrain & subsystem telemetry.</h2>
           <p>
-            Exploded assemblies, evidence-backed components and repair learning
-            require suitable component data. These features are not yet
-            available for this car.
+            Exploded assemblies, electrical wiring graphs, battery management systems,
+            and repair simulations are coming in the next release.
           </p>
         </section>
       </div>

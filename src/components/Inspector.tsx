@@ -426,8 +426,8 @@ export function RepairPanel() {
       <p className="caption">Category: {c.repair.category}</p>
       <Link className="repair-automotive-card" href="/coming-soon">
         <span className="eyebrow">NEXT / AUTOMOTIVE</span>
-        <strong>Continue with the Aston Martin Vulcan</strong>
-        <span>Assembled 3D preview · component twin coming soon ↗</span>
+        <strong>Explore Automotive Concept Twin</strong>
+        <span>Interactive 3D preview · powertrain twin coming soon ↗</span>
       </Link>
     </div>
   );

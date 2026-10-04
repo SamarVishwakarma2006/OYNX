@@ -9,7 +9,24 @@
 
 An advanced, interactive educational product twin and failure-simulation studio built with **Next.js (Turbopack)**, **React 19**, **Three.js**, **React Three Fiber (@react-three/fiber)**, **Drei**, and **Zustand**. 
 
-Experience schematic educational internals paired with realistic exterior models, inspect deep component dependencies, run deterministic qualitative what-if failure simulations, and explore repair procedures—all running 100% locally in your browser with zero mandatory external API keys.
+Experience schematic educational internals paired with 3D exterior models, inspect deep component dependencies, run deterministic qualitative what-if failure simulations, and explore repair procedures—all running 100% locally in your browser with zero mandatory external API keys.
+
+---
+
+## ⚖️ Legal Notice & Trademark Disclaimers
+
+> [!IMPORTANT]
+> **Trademark Notice (Apple Inc.)**:  
+> **Apple**, **iPhone**, and associated product names are registered trademarks of **Apple Inc.** in the U.S. and other countries.  
+> This software (**OYNX / Inside**) is an **independent, open-source, non-commercial educational research project** created under **nominative fair use**. It is **NOT** sponsored, affiliated with, authorized, or endorsed by Apple Inc. in any manner.
+
+> [!NOTE]
+> **Educational & Non-Manufacturer CAD Notice**:  
+> All internal component geometries, dependency graphs, specifications, failure modes, and repair steps depicted in this project are **conceptual educational demonstrations**. They do **not** represent official manufacturer engineering CAD, certified service manuals, or authorized repair protocols.
+
+> [!TIP]
+> **3D Model Attribution (CC BY 4.0)**:  
+> The 3D exterior phone model is authored by **[MajdyModels](https://sketchfab.com/MG990)** and distributed under the **[Creative Commons Attribution 4.0 International License (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/)**. Adaptations made: web scale normalization, real-time material integration, and pairing with procedural educational internals.
 
 ---
 
@@ -18,10 +35,6 @@ Experience schematic educational internals paired with realistic exterior models
 | Interactive 3D Digital Twin | Animated Hero & Exploration |
 | :---: | :---: |
 | ![Digital Twin Preview](docs/images/digital-twin-preview.jpg) | ![Inside Hero](docs/images/inside-smartphone-hero.png) |
-
-| Automotive Twin Preview (Aston Martin Vulcan) |
-| :---: |
-| ![Vulcan Preview](docs/images/inside-vulcan-preview.png) |
 
 ---
 
@@ -68,7 +81,7 @@ Follow this quick guide to run the project locally on your machine.
   - Smooth orbit, pan, zoom, camera reset, focus, component isolation, and fullscreen.
   - Interactive **X-Ray mode** with dynamic opacity slider.
   - **Exploded View Assembly**: Smoothly interpolate assembled and exploded positions for individual subsystems or the entire device.
-  - GLTF/GLB hardware rendering with robust procedural geometry fallback when models are loading or unavailable.
+  - Hardware GLTF/GLB rendering with robust procedural geometry fallback.
 
 - **🔍 Component Inspector & Hierarchy**:
   - Synchronized bidirectional selection across 3D canvas, system tree, and inspector panel.
@@ -96,7 +109,7 @@ Follow this quick guide to run the project locally on your machine.
 - **📦 Community Device Builder & JSON I/O**:
   - Create and test custom digital twins with schema validation.
   - Export product JSON definitions and import community models with live verification.
-  - Includes assembled Aston Martin Vulcan AMR automotive twin preview.
+  - Interactive procedural automotive prototype teaser.
 
 ---
 
@@ -107,7 +120,7 @@ Follow this quick guide to run the project locally on your machine.
 ├── docs/
 │   └── images/              # Project screenshots & visual assets
 ├── public/
-│   └── models/              # 3D GLTF/GLB models (iPhone, Aston Martin Vulcan)
+│   └── models/              # 3D GLTF/GLB models (iPhone exterior under CC BY 4.0)
 ├── src/
 │   ├── app/                 # Next.js App Router (pages, layout, globals.css)
 │   ├── components/          # React components
@@ -125,6 +138,8 @@ Follow this quick guide to run the project locally on your machine.
 │       ├── product.ts       # Zod schemas & validator
 │       ├── store.ts         # Zustand state management
 │       └── model.ts         # Three.js material & GLTF mapping
+├── ATTRIBUTION.md           # 3D model licenses and credit records
+├── DISCLAIMER.md            # Comprehensive trademark and educational disclaimers
 ├── .gitignore               # Clean GitHub ignore rules
 ├── package.json             # Scripts & dependencies
 └── tsconfig.json            # TypeScript configuration
@@ -165,7 +180,7 @@ git push origin main
 - ✅ **`*.tsbuildinfo` & `*.log`** cache ignored.
 - ✅ **`.env*`** files protected (sample provided in `.env.example`).
 - ✅ **Test results & coverage reports** ignored.
-- ✅ **3D Assets** (`.glb`) are optimized and under GitHub's 100MB file limit.
+- ✅ **No unlicensed heavy assets** in repository.
 
 ---
 
@@ -189,5 +204,5 @@ npm run test:e2e
 
 ## 📄 License & Credits
 
-- Bundled iPhone exterior asset credited under **CC BY 4.0** (see `/credits` in-app).
-- Digital Twin framework & simulation engine created under the MIT License.
+- The software framework, simulation engines, and procedural 3D models are open source under the **MIT License**.
+- Bundled iPhone exterior 3D asset is credited under **CC BY 4.0** to [MajdyModels](https://sketchfab.com/MG990). See [`ATTRIBUTION.md`](./ATTRIBUTION.md) and [`DISCLAIMER.md`](./DISCLAIMER.md) for complete details.

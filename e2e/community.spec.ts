@@ -53,21 +53,16 @@ test("repair outcomes persist and export", async ({ page }) => {
   );
 });
 
-test("automotive page loads the supplied assembled model without explosion controls", async ({
+test("automotive page loads the assembled concept model without explosion controls", async ({
   page,
 }) => {
-  const asset = page.waitForResponse(
-    (r) =>
-      r.url().endsWith("/models/aston-vulcan-amr.glb") && r.status() === 200,
-  );
   await page.goto("/coming-soon");
-  await asset;
   await expect(
-    page.getByLabel("Assembled Aston Martin Vulcan 3D preview"),
+    page.getByLabel("Assembled Automotive Concept 3D preview"),
   ).toBeVisible();
   await expect(page.getByRole("button", { name: "Reset view" })).toBeVisible();
   await expect(page.getByLabel("Explosion factor")).toHaveCount(0);
   await expect(
-    page.getByText("The car could not load.", { exact: false }),
+    page.getByText("could not load", { exact: false }),
   ).toHaveCount(0);
 });
