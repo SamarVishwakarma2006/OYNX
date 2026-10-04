@@ -369,26 +369,18 @@ const systemNames = [
 ];
 
 const byId = new Map(smartphone.components.map((c) => [c.id, c]));
+const templateBySystem: Record<string, string> = {
+  structure: "housing",
+  display: "display",
+  power: "battery",
+  compute: "board",
+  camera: "camera",
+  audio: "speaker",
+  haptics: "speaker",
+  thermal: "thermal",
+};
 const components: Component[] = partSeeds.map((part) => {
-  const templateId =
-    part.systemId === "structure"
-      ? "housing"
-      : part.systemId === "display"
-        ? "display"
-        : part.systemId === "power"
-          ? "battery"
-          : part.systemId === "compute"
-            ? "board"
-            : part.systemId === "camera"
-              ? "camera"
-              : part.systemId === "audio"
-                ? "speaker"
-                : part.systemId === "haptics"
-                  ? "speaker"
-                  : part.systemId === "thermal"
-                    ? "thermal"
-                    : "wireless";
-  const template = byId.get(templateId)!;
+  const template = byId.get(templateBySystem[part.systemId] ?? "wireless")!;
   const source = part.source ?? repairManual;
   const verifiedPart = source !== demoSource;
   const step = `Inspect the ${part.name} in the schematic. Confirm the exact model and follow Apple’s current service procedure before any physical repair.`;
@@ -464,6 +456,7 @@ const relationships: [string, string, Dependency["dependencyType"]][] = [
   ["enclosure", "display", "structural"],
   ["battery", "wireless-coil", "power"],
 ];
+const componentsById = new Map(components.map((c) => [c.id, c]));
 const dependencies: Dependency[] = relationships.map(
   ([sourceComponentId, targetComponentId, dependencyType], i) => ({
     id: `iphone-edge-${i}`,
@@ -473,7 +466,7 @@ const dependencies: Dependency[] = relationships.map(
     criticality: "medium",
     required: true,
     propagation: "degraded",
-    description: `${components.find((c) => c.id === targetComponentId)!.name} is associated with ${components.find((c) => c.id === sourceComponentId)!.name} in this educational relationship map.`,
+    description: `${componentsById.get(targetComponentId)!.name} is associated with ${componentsById.get(sourceComponentId)!.name} in this educational relationship map.`,
     provenance: demoSource,
   }),
 );

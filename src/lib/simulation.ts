@@ -67,45 +67,36 @@ export function simulateFailure(
       }
     }
   }
-  const affected = product.components.filter(
-    (c) => c.id !== rootId && statuses[c.id] !== "healthy",
+  const changed = product.components.filter(
+    (c) => statuses[c.id] !== "healthy",
   );
+  const affected = changed.filter((c) => c.id !== rootId);
   const directIds = new Set(
     graph
       .getDependents(rootId)
       .filter((e) => e.propagation !== "none")
       .map((e) => e.targetComponentId),
   );
+  const componentIdsWithStatus = (status: Status) =>
+    product.components
+      .filter((c) => statuses[c.id] === status)
+      .map((c) => c.id);
   return {
     id: crypto.randomUUID(),
     rootId,
     failureType,
     statuses,
-    failedComponents: product.components
-      .filter((c) => statuses[c.id] === "failed")
-      .map((c) => c.id),
-    degradedComponents: product.components
-      .filter((c) => statuses[c.id] === "degraded")
-      .map((c) => c.id),
-    unaffectedComponents: product.components
-      .filter((c) => statuses[c.id] === "healthy")
-      .map((c) => c.id),
+    failedComponents: componentIdsWithStatus("failed"),
+    degradedComponents: componentIdsWithStatus("degraded"),
+    unaffectedComponents: componentIdsWithStatus("healthy"),
     directlyAffected: affected
       .filter((c) => directIds.has(c.id))
       .map((c) => c.id),
     indirectlyAffected: affected
       .filter((c) => !directIds.has(c.id))
       .map((c) => c.id),
-    affectedSystems: [
-      ...new Set(
-        product.components
-          .filter((c) => statuses[c.id] !== "healthy")
-          .map((c) => c.systemId),
-      ),
-    ],
-    affectedFunctions: product.components
-      .filter((c) => statuses[c.id] !== "healthy")
-      .map((c) => c.function),
+    affectedSystems: [...new Set(changed.map((c) => c.systemId))],
+    affectedFunctions: changed.map((c) => c.function),
     dependencyPaths,
     severity:
       Object.values(statuses).filter((s) => s === "failed").length > 3

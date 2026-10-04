@@ -171,45 +171,47 @@ function PartBody({
     />
   );
 
-  if (detail === "enclosure") {
-    const rail = Math.max(0.08, Math.min(w, h) * 0.045);
+  if (detail === "enclosure" || detail === "adhesive") {
+    const enclosure = detail === "enclosure";
+    const rail = enclosure
+      ? Math.max(0.08, Math.min(w, h) * 0.045)
+      : Math.max(0.025, Math.min(w, h) * 0.035);
+    const rails: {
+      size: Component["geometry"]["size"];
+      position: Component["geometry"]["position"];
+    }[] = [
+      { size: [w, rail, d], position: [0, h / 2 - rail / 2, 0] },
+      { size: [w, rail, d], position: [0, -h / 2 + rail / 2, 0] },
+      {
+        size: [rail, h - rail * 2, d],
+        position: [-w / 2 + rail / 2, 0, 0],
+      },
+      {
+        size: [rail, h - rail * 2, d],
+        position: [w / 2 - rail / 2, 0, 0],
+      },
+    ];
     return (
       <group>
-        <Piece
-          size={[w, rail, d]}
-          position={[0, h / 2 - rail / 2, 0]}
-          color={color}
-          opacity={opacity}
-          metalness={0.78}
-        />
-        <Piece
-          size={[w, rail, d]}
-          position={[0, -h / 2 + rail / 2, 0]}
-          color={color}
-          opacity={opacity}
-          metalness={0.78}
-        />
-        <Piece
-          size={[rail, h - rail * 2, d]}
-          position={[-w / 2 + rail / 2, 0, 0]}
-          color={color}
-          opacity={opacity}
-          metalness={0.78}
-        />
-        <Piece
-          size={[rail, h - rail * 2, d]}
-          position={[w / 2 - rail / 2, 0, 0]}
-          color={color}
-          opacity={opacity}
-          metalness={0.78}
-        />
-        <Piece
-          size={[w * 0.34, h * 0.025, d * 1.2]}
-          position={[-w * 0.29, h * 0.34, 0]}
-          color={color}
-          opacity={opacity}
-          metalness={0.78}
-        />
+        {rails.map((geometry, i) => (
+          <Piece
+            key={i}
+            {...geometry}
+            color={color}
+            opacity={opacity}
+            metalness={enclosure ? 0.78 : 0.08}
+            radius={enclosure ? undefined : rail / 3}
+          />
+        ))}
+        {enclosure && (
+          <Piece
+            size={[w * 0.34, h * 0.025, d * 1.2]}
+            position={[-w * 0.29, h * 0.34, 0]}
+            color={color}
+            opacity={opacity}
+            metalness={0.78}
+          />
+        )}
       </group>
     );
   }
@@ -539,45 +541,6 @@ function PartBody({
           />
           {addMaterial("#111820", 0.25)}
         </mesh>
-      </group>
-    );
-  }
-  if (detail === "adhesive") {
-    const strip = Math.max(0.025, Math.min(w, h) * 0.035);
-    return (
-      <group>
-        <Piece
-          size={[w, strip, d]}
-          position={[0, h / 2 - strip / 2, 0]}
-          color={color}
-          opacity={opacity}
-          metalness={0.08}
-          radius={strip / 3}
-        />
-        <Piece
-          size={[w, strip, d]}
-          position={[0, -h / 2 + strip / 2, 0]}
-          color={color}
-          opacity={opacity}
-          metalness={0.08}
-          radius={strip / 3}
-        />
-        <Piece
-          size={[strip, h - strip * 2, d]}
-          position={[-w / 2 + strip / 2, 0, 0]}
-          color={color}
-          opacity={opacity}
-          metalness={0.08}
-          radius={strip / 3}
-        />
-        <Piece
-          size={[strip, h - strip * 2, d]}
-          position={[w / 2 - strip / 2, 0, 0]}
-          color={color}
-          opacity={opacity}
-          metalness={0.08}
-          radius={strip / 3}
-        />
       </group>
     );
   }
