@@ -979,9 +979,11 @@ function Scene() {
           >
             <Suspense
               fallback={
-                <Html center>
-                  <span className="badge">Loading iPhone exterior…</span>
-                </Html>
+                <group>
+                  {s.product.components.map((c) => (
+                    <Part key={c.id} component={c} />
+                  ))}
+                </group>
               }
             >
               <AssetModel url={s.product.model3D.exteriorUrl} phone />
