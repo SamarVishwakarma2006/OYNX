@@ -44,7 +44,8 @@ test("imports a mapped GLTF model and preserves a usable fallback for a missing 
       body: JSON.stringify(gltf),
     }),
   );
-  await page.route("**/missing-twin.glb", (route) =>
+  // Deliberate 404: verify that unavailable customer models retain usable controls.
+  await page.route("**/intentional-missing-twin.glb", (route) =>
     route.fulfill({ status: 404, body: "Not found" }),
   );
   await page.goto("/workshop#projects");
@@ -67,7 +68,7 @@ test("imports a mapped GLTF model and preserves a usable fallback for a missing 
   await page.getByRole("button", { name: "Focus", exact: true }).click();
   await expect(page.locator("canvas")).toBeVisible();
   await page.getByRole("link", { name: "Workshop", exact: true }).click();
-  product.model3D.url = "/missing-twin.glb";
+  product.model3D.url = "/intentional-missing-twin.glb";
   await page.getByLabel("Restore project backup or JSON").setInputFiles({
     name: "product.json",
     mimeType: "application/json",

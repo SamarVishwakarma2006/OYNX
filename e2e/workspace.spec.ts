@@ -8,8 +8,10 @@ test("demo synchronizes 3D controls, graph, simulation and assistant context", a
   await page.goto("/");
   await page.getByRole("button", { name: "Explore the demo" }).click();
   await expect(page.locator("canvas")).toBeVisible();
-  await page.getByRole("button", { name: "Battery", exact: true }).click();
-  await expect(page.locator(".inspector h2")).toHaveText("Battery");
+  await page
+    .getByRole("button", { name: "↳ Lithium-ion battery", exact: true })
+    .click();
+  await expect(page.locator(".inspector h2")).toHaveText("Lithium-ion battery");
   await page.getByRole("button", { name: "Focus", exact: true }).click();
   await expect(
     page.getByRole("button", { name: "Restore product", exact: true }),
@@ -30,16 +32,18 @@ test("demo synchronizes 3D controls, graph, simulation and assistant context", a
     .first()
     .click();
   await page
-    .getByRole("button", { name: "Processor, healthy", exact: true })
+    .getByRole("button", { name: "Logic board, healthy", exact: true })
     .click();
-  await expect(page.locator(".inspector h2")).toHaveText("Processor");
-  await page.getByRole("button", { name: "Battery", exact: true }).click();
+  await expect(page.locator(".inspector h2")).toHaveText("Logic board");
+  await page
+    .getByRole("button", { name: "↳ Lithium-ion battery", exact: true })
+    .click();
   await page.getByRole("button", { name: /Simulation$/ }).click();
   await page
     .getByRole("button", { name: "Simulate failure", exact: true })
     .click();
   await expect(
-    page.getByText("11 failed · 0 degraded · 4 unaffected"),
+    page.getByText("1 failed · 9 degraded · 17 unaffected"),
   ).toBeVisible();
   await page.getByLabel("Compare: show healthy baseline").check();
   await expect(page.locator(".viewer-controls")).toContainText("BASELINE");
@@ -51,14 +55,14 @@ test("demo synchronizes 3D controls, graph, simulation and assistant context", a
   ).toHaveCount(0);
   await page
     .getByLabel("What-if scenario")
-    .fill("What if I remove the camera?");
+    .fill("What if I remove the 48 MP Fusion rear camera assembly?");
   await page.getByRole("button", { name: "Analyze scenario" }).click();
   await expect(
-    page.getByText("1 failed · 0 degraded · 14 unaffected"),
+    page.getByText("1 failed · 0 degraded · 26 unaffected"),
   ).toBeVisible();
   await page.getByRole("button", { name: "Undo", exact: true }).click();
   await expect(
-    page.getByText("11 failed · 0 degraded · 4 unaffected"),
+    page.getByText("1 failed · 9 degraded · 17 unaffected"),
   ).toBeVisible();
   await page.getByRole("button", { name: /Repair$/ }).click();
   await expect(
@@ -68,7 +72,7 @@ test("demo synchronizes 3D controls, graph, simulation and assistant context", a
   await page
     .getByRole("button", { name: "Show dependencies", exact: true })
     .click();
-  await expect(page.locator(".messages")).toContainText("Battery");
+  await expect(page.locator(".messages")).toContainText("Lithium-ion battery");
   await page
     .getByRole("button", { name: "Highlight dependency paths" })
     .click();
@@ -104,11 +108,11 @@ test("command palette, theme and responsive viewport remain usable", async ({
   await page.goto("/");
   await page.getByRole("button", { name: "Explore the demo" }).click();
   await page.getByRole("button", { name: "Command search" }).click();
-  await page.getByLabel("Search commands").fill("Focus Battery");
+  await page.getByLabel("Search commands").fill("Focus Lithium-ion battery");
   await page
-    .getByRole("button", { name: "Focus Battery ↵", exact: true })
+    .getByRole("button", { name: "Focus Lithium-ion battery ↵", exact: true })
     .click();
-  await expect(page.locator(".inspector h2")).toHaveText("Battery");
+  await expect(page.locator(".inspector h2")).toHaveText("Lithium-ion battery");
   await page.getByRole("button", { name: "Toggle theme" }).click();
   await expect(page.locator(".workspace")).toHaveClass(/light/);
   const overflow = await page.evaluate(
