@@ -1,208 +1,149 @@
-# OYNX — 3D Digital Twin Studio & Interactive Simulation Engine
+<div align="center">
 
-[![Next.js](https://img.shields.io/badge/Next.js-16.3.8-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
-[![React](https://img.shields.io/badge/React-19.3.0-blue?style=for-the-badge&logo=react)](https://react.dev/)
-[![Three.js](https://img.shields.io/badge/Three.js-0.186-orange?style=for-the-badge&logo=three.js)](https://threejs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-6.0-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
-[![TailwindCSS](https://img.shields.io/badge/TailwindCSS-v4-38bdf8?style=for-the-badge&logo=tailwindcss)](https://tailwindcss.com/)
-[![Vitest](https://img.shields.io/badge/Tested%20With-Vitest-green?style=for-the-badge&logo=vitest)](https://vitest.dev/)
+# OYNX
 
-An advanced, interactive educational product twin and failure-simulation studio built with **Next.js (Turbopack)**, **React 19**, **Three.js**, **React Three Fiber (@react-three/fiber)**, **Drei**, and **Zustand**. 
+### Look inside. Understand the connections. Explore what happens next.
 
-Experience schematic educational internals paired with 3D exterior models, inspect deep component dependencies, run deterministic qualitative what-if failure simulations, and explore repair procedures—all running 100% locally in your browser with zero mandatory external API keys.
+An interactive 3D product exploration and simulation studio, built for learning how devices work.
 
----
+[![CI](https://github.com/SamarVishwakarma2006/OYNX/actions/workflows/ci.yml/badge.svg)](https://github.com/SamarVishwakarma2006/OYNX/actions/workflows/ci.yml)
+![Next.js](https://img.shields.io/badge/Next.js-16-000000?logo=nextdotjs)
+![React](https://img.shields.io/badge/React-19-149eca?logo=react)
+![TypeScript](https://img.shields.io/badge/TypeScript-6-3178c6?logo=typescript&logoColor=white)
+![Three.js](https://img.shields.io/badge/Three.js-3D-111827?logo=threedotjs)
 
-## ⚖️ Legal Notice & Trademark Disclaimers
+[Quick start](#quick-start) · [Explore the studio](#explore-the-studio) · [Your own models](#bring-your-own-model) · [Development](#development)
 
-> [!IMPORTANT]
-> **Trademark Notice (Apple Inc.)**:  
-> **Apple**, **iPhone**, and associated product names are registered trademarks of **Apple Inc.** in the U.S. and other countries.  
-> This software (**OYNX / Inside**) is an **independent, open-source, non-commercial educational research project** created under **nominative fair use**. It is **NOT** sponsored, affiliated with, authorized, or endorsed by Apple Inc. in any manner.
+![OYNX animated smartphone landing page](docs/images/inside-smartphone-hero.png)
 
-> [!NOTE]
-> **Educational & Non-Manufacturer CAD Notice**:  
-> All internal component geometries, dependency graphs, specifications, failure modes, and repair steps depicted in this project are **conceptual educational demonstrations**. They do **not** represent official manufacturer engineering CAD, certified service manuals, or authorized repair protocols.
+</div>
 
-> [!TIP]
-> **3D Model Attribution (CC BY 4.0)**:  
-> The 3D exterior phone model is authored by **[MajdyModels](https://sketchfab.com/MG990)** and distributed under the **[Creative Commons Attribution 4.0 International License (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/)**. Adaptations made: web scale normalization, real-time material integration, and pairing with procedural educational internals.
+## From a product to its parts
 
----
+OYNX connects a 3D viewer, component inspector, dependency graph, and qualitative failure simulator in one workspace. Select a part, see what depends on it, and explore how a failure could affect the rest of the device.
 
-## 📸 Preview Showcase
+Start with the **27-component iPhone schematic demo**, import your own model, or document a device without CAD. The interface also uses the name **Inside**.
 
-| Interactive 3D Digital Twin | Animated Hero & Exploration |
-| :---: | :---: |
-| ![Digital Twin Preview](docs/images/digital-twin-preview.jpg) | ![Inside Hero](docs/images/inside-smartphone-hero.png) |
+**No API key is required for the demo or the local assistant.**
 
----
+## Explore the studio
 
-## 🚀 How to Run Locally from Terminal
+| Experience | What you can do |
+| --- | --- |
+| **Interactive 3D** | Rotate, pan, zoom, focus, isolate, hide parts, and switch camera views. |
+| **Exploded assemblies & X-Ray** | Separate schematic components, filter by subsystem, and adjust transparency. |
+| **Connected components** | Select parts across the viewer, navigator, inspector, and directed dependency graph. |
+| **What-if simulations** | Inject supported failures, inspect affected components, compare a healthy baseline, and undo scenarios. |
+| **Repair exploration** | Follow dataset-backed steps, inspect compatibility results, and record repair outcomes. |
+| **Local assistant** | Ask contextual questions grounded in the current product and its relationships. Responses are deterministic, not generated by a remote LLM. |
+| **Unified Workshop** | Import a model, build a schematic, or reopen saved projects from one place. |
+| **Automotive preview** | Rotate an assembled procedural concept car. Automotive exploded views and diagnostics are not implemented yet. |
 
-Follow this quick guide to run the project locally on your machine.
+![OYNX digital twin workspace preview](docs/images/digital-twin-preview.jpg)
 
-### 📋 Local Execution Command Matrix
+> The bundled phone pairs an exterior model with educational schematic internals. It is not manufacturer CAD, a live sensor-connected twin, or a validated engineering simulator. Repair content is educational guidance; see the [project disclaimer](DISCLAIMER.md).
 
-| Step | Action | Terminal Command | Directory | Description & Notes |
-| :---: | :--- | :--- | :--- | :--- |
-| **1** | **Navigate to Project** | `cd work/3D-twin` | Project Root | Move into the project directory where `package.json` resides. |
-| **2** | **Install Dependencies** | `npm install` *(or `npm ci`)* | `work/3D-twin` | Installs Three.js, React Three Fiber, Next.js, and dependencies. |
-| **3** | **Start Dev Server** | `npm run dev` | `work/3D-twin` | Launches the local server at `http://127.0.0.1:3000`. |
-| **4** | **Open in Browser** | `http://127.0.0.1:3000` | Browser URL | Open your browser and click **"Try Interactive Demo"**. |
-| **5** | **Run Type Check** | `npm run typecheck` | `work/3D-twin` | Validates TypeScript schemas, components, and types. |
-| **6** | **Run Unit Tests** | `npm test` | `work/3D-twin` | Runs Vitest unit test suite (graph, model, engines). |
-| **7** | **Production Build** | `npm run build` | `work/3D-twin` | Compiles optimized Next.js production bundle. |
-| **8** | **Serve Production** | `npm run start` | `work/3D-twin` | Serves the production build locally at port 3000. |
+## Quick start
 
-> [!TIP]
-> If you have opened the workspace root directory in your terminal (`files-pasted-by-the-user-you`), you can either run `cd work/3D-twin` first, or directly run `npm run dev` (proxied automatically via the root workspace configuration).
-
----
-
-## 🛠️ Complete Terminal Scripts Reference
-
-| NPM Script | Terminal Command | Purpose / Functionality |
-| :--- | :--- | :--- |
-| `dev` | `npm run dev` | Runs Next.js Turbopack dev server on `127.0.0.1:3000` |
-| `build` | `npm run build` | Builds the production-ready Next.js application |
-| `start` | `npm run start` | Starts the production server on `127.0.0.1:3000` |
-| `typecheck` | `npm run typecheck` | Validates all TypeScript types with `tsc --noEmit` |
-| `lint` | `npm run lint` | Runs ESLint 9 to verify code standards |
-| `test` | `npm test` | Executes the Vitest unit test suite |
-| `test:e2e` | `npm run test:e2e` | Runs Playwright end-to-end browser tests |
-| `format` | `npm run format` | Auto-formats code with Prettier |
-
----
-
-## 🌟 Key Features
-
-- **🎮 High-Fidelity 3D Viewer & Controls**:
-  - Smooth orbit, pan, zoom, camera reset, focus, component isolation, and fullscreen.
-  - Interactive **X-Ray mode** with dynamic opacity slider.
-  - **Exploded View Assembly**: Smoothly interpolate assembled and exploded positions for individual subsystems or the entire device.
-  - Hardware GLTF/GLB rendering with robust procedural geometry fallback.
-
-- **🔍 Component Inspector & Hierarchy**:
-  - Synchronized bidirectional selection across 3D canvas, system tree, and inspector panel.
-  - Inspect specifications, physical hierarchy, functional purpose, and materials for 15 internal components.
-
-- **🕸️ Directed Dependency Graph**:
-  - Provider-to-consumer directed graph with cycle detection (`battery → connector → power controller → logic board`).
-  - Interactive nodes with pan, zoom, status highlighting, and bidirectional 3D focus links.
-
-- **⚡ Deterministic Simulation Engine**:
-  - Monotone finite fixed-point fault propagation: `healthy < degraded < failed`.
-  - Simulate what-if scenarios (e.g., inject battery failure, thermal degradation, disconnect).
-  - Compare baseline vs. degraded states with instant reset, undo, and multi-scenario session logging.
-
-- **🔧 Grounded Repair & Compatibility Diagnostics**:
-  - Structured step-by-step repair guides linked directly to 3D component focus.
-  - Safety cautions, high-voltage warnings, and technical replacement criteria.
-  - Explainable compatibility validation (`NOT_COMPATIBLE`, `POTENTIALLY_COMPATIBLE`, `VERIFIED_COMPATIBLE`).
-
-- **🤖 Grounded Local Assistant**:
-  - 100% local, privacy-preserving, and deterministic assistant.
-  - Answers contextual questions strictly using current product state, graph relationships, and repair data.
-  - No external paid API keys or remote LLMs required.
-
-- **📦 Community Device Builder & JSON I/O**:
-  - Create and test custom digital twins with schema validation.
-  - Export product JSON definitions and import community models with live verification.
-  - Interactive procedural automotive prototype teaser.
-
----
-
-## 📁 Repository Structure
-
-```text
-3D-twin/
-├── docs/
-│   └── images/              # Project screenshots & visual assets
-├── public/
-│   └── models/              # 3D GLTF/GLB models (iPhone exterior under CC BY 4.0)
-├── src/
-│   ├── app/                 # Next.js App Router (pages, layout, globals.css)
-│   ├── components/          # React components
-│   │   ├── Viewer.tsx       # Three.js / React Three Fiber 3D Canvas
-│   │   ├── Inspector.tsx    # Component detail inspector
-│   │   ├── DependencyView.tsx # Graph visualization
-│   │   ├── Assistant.tsx    # Grounded contextual assistant
-│   │   ├── Intake.tsx       # Interactive landing & intake flow
-│   │   ├── Workspace.tsx    # Studio layout orchestration
-│   │   └── ui/              # Buttons, inputs, dialogs, sliders
-│   ├── data/                # Product definitions (iPhone, demo systems)
-│   └── lib/                 # Core engine logic
-│       ├── graph.ts         # Dependency graph algorithms & cycles
-│       ├── simulation.ts    # Monotone failure propagation
-│       ├── product.ts       # Zod schemas & validator
-│       ├── store.ts         # Zustand state management
-│       └── model.ts         # Three.js material & GLTF mapping
-├── ATTRIBUTION.md           # 3D model licenses and credit records
-├── DISCLAIMER.md            # Comprehensive trademark and educational disclaimers
-├── .gitignore               # Clean GitHub ignore rules
-├── package.json             # Scripts & dependencies
-└── tsconfig.json            # TypeScript configuration
-```
-
----
-
-## 🐙 Git & GitHub Upload Guide
-
-This repository is optimized for Git and GitHub. All heavy build outputs, temporary caches, and system files are excluded via `.gitignore`.
-
-### 1. Uploading / Pushing to GitHub
-
-Open your terminal and run the following commands:
+Use **Node.js 24** and npm, matching the CI environment.
 
 ```bash
-# 1. Ensure you are in the project folder
-cd work/3D-twin
-
-# 2. Check the current git status
-git status
-
-# 3. Stage changes
-git add .
-
-# 4. Commit your changes
-git commit -m "feat: complete 3D digital twin studio and local terminal setup"
-
-# 5. Push to GitHub
-git push origin main
+git clone https://github.com/SamarVishwakarma2006/OYNX.git
+cd OYNX
+npm ci
+npm run dev
 ```
 
-*(If you are pushing to a new repository, configure your remote first: `git remote add origin https://github.com/<your-username>/<your-repo-name>.git` followed by `git push -u origin main`)*
+Open **[127.0.0.1:3000](http://127.0.0.1:3000)** and choose **Explore the demo** or **Open Workshop**.
 
-### 2. Git-Friendly Safeguards in place
+To try a complete flow:
 
-- ✅ **`node_modules/` & `.next/`** build output ignored.
-- ✅ **`*.tsbuildinfo` & `*.log`** cache ignored.
-- ✅ **`.env*`** files protected (sample provided in `.env.example`).
-- ✅ **Test results & coverage reports** ignored.
-- ✅ **No unlicensed heavy assets** in repository.
+1. Open the demo and select **Lithium-ion battery** in the component navigator.
+2. Use **Focus**, **Isolate**, **X-Ray**, or **Exploded** to inspect it.
+3. Open **Dependencies** to explore its connections.
+4. Open **Simulation**, simulate a failure, and compare the healthy baseline.
+5. Use **Repair** or **Ask Inside** to explore the available context.
 
----
+## Bring your own model
 
-## 🧪 Running Tests & Quality Checks
+The Workshop at `/workshop` offers three starting points:
+
+| Starting point | Input | Result |
+| --- | --- | --- |
+| **Import a model** | A self-contained GLB, optionally with a parts-list CSV | A locally saved project with meshes mapped to component records |
+| **Build without a model** | Device details, observed components, and evidence | An abstract schematic, not a reconstructed CAD model |
+| **Open an existing project** | A saved local project or exported JSON backup | A restored workspace ready to explore |
+
+### Import workflow
+
+1. Choose **Import a model** and select a **GLB up to 50 MB**. Convert CAD files to GLB before importing.
+2. Optionally add a **CSV up to 1 MB** with a required `name` column and an optional `mesh` column.
+3. Map meshes to components manually or use **Use mesh labels as components**. Meshes assigned the same component name move together in exploded view.
+4. Choose **Save project**, then open it from the project library.
+5. Export a backup to keep a portable copy.
+
+Example parts list; replace the mesh labels with names from your own model:
+
+```csv
+name,mesh
+Rear cover,Rear_Cover
+Display,Front_Glass
+Battery,Battery_Cell
+```
+
+### Where your work lives
+
+Imported GLB files and mappings are stored in **IndexedDB**; schematic projects use **localStorage**. The import workflow processes files in your browser without an account or server upload.
+
+This is browser-local storage, not a hosted private team workspace. Projects do not automatically sync across devices, and clearing site data can remove them. **Export backups before clearing browser data or moving devices.**
+
+## Development
+
+Built with Next.js App Router, React, TypeScript, Three.js, React Three Fiber, Drei, Zustand, and Zod. Vitest covers core logic; Playwright covers desktop and mobile browser flows.
+
+| Command | Purpose |
+| --- | --- |
+| `npm run dev` | Start the development server |
+| `npm run build` | Create a production build |
+| `npm run start` | Serve the production build |
+| `npm run typecheck` | Check TypeScript types |
+| `npm run lint` | Run ESLint |
+| `npm test` | Run unit tests |
+| `npm run test:e2e` | Run desktop and mobile browser tests |
+| `npm run format` | Format source and test files |
+
+Install the browser before your first end-to-end test run:
 
 ```bash
-# Run Vitest unit tests
-npm test
-
-# Run TypeScript typecheck
-npm run typecheck
-
-# Run ESLint validation
-npm run lint
-
-# Run End-to-End Playwright tests
+npx playwright install chromium
 npm run test:e2e
 ```
 
----
+[GitHub Actions](https://github.com/SamarVishwakarma2006/OYNX/actions/workflows/ci.yml) runs type checking, linting, unit tests, a production build, and browser tests. Failed browser runs upload traces in the `browser-test-results` artifact.
 
-## 📄 License & Credits
+The missing-model test deliberately returns a **404** for `intentional-missing-twin.glb` to verify that the procedural fallback remains usable. That fixture is not a production asset.
 
-- The software framework, simulation engines, and procedural 3D models are open source under the **MIT License**.
-- Bundled iPhone exterior 3D asset is credited under **CC BY 4.0** to [MajdyModels](https://sketchfab.com/MG990). See [`ATTRIBUTION.md`](./ATTRIBUTION.md) and [`DISCLAIMER.md`](./DISCLAIMER.md) for complete details.
+<details>
+<summary><strong>Repository map</strong></summary>
+
+```text
+src/
+├── app/             Routes: landing, Workshop, repair log, automotive preview
+├── components/      Viewer, inspector, graph, assistant, and project builders
+├── data/            Bundled product and component definitions
+└── lib/             Validation, simulation, state, storage, and model mapping
+e2e/                 Playwright browser tests
+public/models/       Bundled 3D assets
+docs/images/         README previews
+.github/workflows/   Continuous integration
+```
+
+Start with `src/components/Workspace.tsx` for the studio, `src/components/Workshop.tsx` for project management, or `src/lib/simulation.ts` for failure propagation.
+
+</details>
+
+## Credits & project scope
+
+OYNX is an independent educational project with no manufacturer affiliation. Product names identify the devices being explored.
+
+The iPhone exterior model is credited to **[MajdyModels](https://sketchfab.com/MG990)** under **CC BY 4.0**, with adaptations documented in [ATTRIBUTION.md](ATTRIBUTION.md). Third-party asset terms are separate from application code; see the attribution record and [DISCLAIMER.md](DISCLAIMER.md) for details.
