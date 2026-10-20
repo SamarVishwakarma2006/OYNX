@@ -268,7 +268,7 @@ export async function exportPrivateProject(record: PrivateProject) {
   );
   const a = document.createElement("a");
   a.href = url;
-  a.download = "oynx-private-project.json";
+  a.download = "oynx-project.json";
   a.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }

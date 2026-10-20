@@ -78,43 +78,24 @@ test("demo synchronizes 3D controls, graph, simulation and assistant context", a
   expect(errors).toEqual([]);
 });
 
-test("intake confirms approximate matches and validates uploaded images", async ({
+test("landing offers a single Workshop entry without duplicated intake forms", async ({
   page,
 }) => {
   await page.goto("/");
-  await page
-    .getByLabel("Product name", { exact: true })
-    .fill("Unknown appliance");
-  await page
-    .getByRole("button", { name: "Analyze Product", exact: true })
-    .click();
-  await expect(page.getByText("0% CATEGORY CONFIDENCE")).toBeVisible();
-  await expect(page.getByText(/No reliable product match/)).toBeVisible();
-  await page.getByLabel("Product images", { exact: true }).setInputFiles({
-    name: "fake.png",
-    mimeType: "image/png",
-    buffer: Buffer.from("not a png"),
-  });
+  await expect(page.getByLabel("Product name", { exact: true })).toHaveCount(0);
+  await expect(page.getByLabel("Device name")).toHaveCount(0);
+  await expect(page.getByLabel("3D assembly")).toHaveCount(0);
+  await page.getByRole("link", { name: "Open Workshop", exact: true }).click();
+  await expect(page).toHaveURL(/\/workshop$/);
   await expect(
-    page.getByRole("alert").filter({ hasText: "content does not match" }),
-  ).toContainText("content does not match");
-  await page.getByLabel("Product images", { exact: true }).setInputFiles({
-    name: "tiny.png",
-    mimeType: "image/png",
-    buffer: await page.screenshot(),
-  });
-  await expect(page.getByAltText("Product view 1")).toBeVisible();
-  await page.getByLabel("Product name", { exact: true }).fill("Smartphone");
-  await page
-    .getByRole("button", { name: "Analyze Product", exact: true })
-    .click();
-  await expect(page.getByText("55% CATEGORY CONFIDENCE")).toBeVisible();
-  await page
-    .getByRole("button", { name: "Use educational demo model →" })
-    .click();
-  await expect(page.locator(".product-title")).toContainText(
-    "Generic Smartphone",
-  );
+    page.getByRole("button", { name: /Import a model/ }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: /Build without a model/ }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: /Open an existing project/ }),
+  ).toBeVisible();
 });
 
 test("command palette, theme and responsive viewport remain usable", async ({

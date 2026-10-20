@@ -14,7 +14,7 @@ test("guided builder preserves evidence, saves and opens an honest schematic", a
     .fill("Mesh visible around the blades.");
   await page.getByRole("button", { name: "Add component" }).click();
   await page.getByRole("button", { name: /Review 1 components/ }).click();
-  await page.getByRole("button", { name: "Save locally" }).click();
+  await page.getByRole("button", { name: "Save project" }).click();
   await expect(page.getByRole("status")).toContainText("Saved on this browser");
   await page.reload();
   await page.getByRole("button", { name: "Open", exact: true }).click();

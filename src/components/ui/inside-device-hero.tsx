@@ -245,11 +245,8 @@ export default function InsideDeviceHero(props: Props) {
             <a href="/coming-soon" className="inside-hero-skip">
               Automotive ↗
             </a>
-            <a href="#build" className="inside-hero-skip">
-              Guided builder
-            </a>
             <button onClick={props.onStartProduct} className="inside-hero-skip">
-              Bring your product
+              Open Workshop
             </button>
             <button onClick={props.onOpenDemo} className="inside-hero-lab">
               Open the lab <ArrowUpRight size={14} />
@@ -387,7 +384,7 @@ export default function InsideDeviceHero(props: Props) {
               >
                 {active === 5
                   ? "Start with your product"
-                  : "Bring your product"}
+                  : "Open Workshop"}
               </button>
             )}
           </div>

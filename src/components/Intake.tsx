@@ -1,34 +1,15 @@
 "use client";
-import { useEffect, useRef, useState, type CSSProperties } from "react";
-import InsideDeviceHero from "./ui/inside-device-hero";
+import { useState, type CSSProperties } from "react";
 import Link from "next/link";
-import { ProjectBuilder } from "./ProjectBuilder";
-
-import Image from "next/image";
-import { ArrowUpRight, Upload } from "lucide-react";
-import {
-  localIdentification,
-  type IdentificationInput,
-  type Candidate,
-} from "../lib/providers";
-import { validateImage } from "../lib/upload";
+import { useRouter } from "next/navigation";
+import { ArrowUpRight } from "lucide-react";
+import InsideDeviceHero from "./ui/inside-device-hero";
 import { smartphone } from "../data/smartphone";
 import { iphone } from "../data/iphone";
 import { useWorkspace, type Mode } from "../lib/store";
 
 export function Intake({ onOpen }: { onOpen: () => void }) {
-  const [name, setName] = useState("");
-  const [manufacturer, setManufacturer] = useState("");
-  const [model, setModel] = useState("");
-  const [images, setImages] = useState<
-    (IdentificationInput["images"][number] & { url: string })[]
-  >([]);
-  const urls = useRef<string[]>([]);
-  const [error, setError] = useState("");
-  const [busy, setBusy] = useState(false);
-  const [candidate, setCandidate] = useState<Candidate | null>(null);
-  const [stages, setStages] = useState<string[]>([]);
-
+  const router = useRouter();
   const [activeSystem, setActiveSystem] = useState("all");
   const systems = [
     ["all", "All parts"],
@@ -41,58 +22,6 @@ export function Intake({ onOpen }: { onOpen: () => void }) {
   const featuredParts = smartphone.components
     .filter((part) => activeSystem === "all" || part.systemId === activeSystem)
     .slice(0, 6);
-  useEffect(
-    () => () => urls.current.forEach((url) => URL.revokeObjectURL(url)),
-    [],
-  );
-  async function upload(files: FileList | null) {
-    if (!files) return;
-    setBusy(true);
-    setError("");
-    setCandidate(null);
-    try {
-      if (files.length + images.length > 6)
-        throw new Error("Upload at most six images.");
-      const metadata = await Promise.all(
-        Array.from(files).map(async (file) => ({
-          file,
-          metadata: await validateImage(file),
-        })),
-      );
-      const next = metadata.map(({ file, metadata }) => {
-        const url = URL.createObjectURL(file);
-        urls.current.push(url);
-        return { ...metadata, url };
-      });
-      setImages((current) => [...current, ...next]);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Image validation failed.");
-    } finally {
-      setBusy(false);
-    }
-  }
-  async function identify() {
-    setBusy(true);
-    setError("");
-    setCandidate(null);
-    try {
-      const result = await localIdentification.identifyProduct({
-        name,
-        manufacturer,
-        model,
-        images: images.map(({ url, ...rest }) => {
-          void url;
-          return rest;
-        }),
-      });
-      setStages(result.stages);
-      setCandidate(result.candidates[0]);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Identification failed.");
-    } finally {
-      setBusy(false);
-    }
-  }
   function openDemo(
     mode: Mode = "Explore",
     componentId?: string,
@@ -107,192 +36,31 @@ export function Intake({ onOpen }: { onOpen: () => void }) {
     onOpen();
     window.scrollTo({ top: 0, behavior: "instant" });
   }
-  function startProduct() {
-    document.getElementById("explore")?.scrollIntoView({
-      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
-        ? "auto"
-        : "smooth",
-    });
-  }
+
   return (
     <main className="landing inside-landing">
       <InsideDeviceHero
         onOpenDemo={() => openDemo()}
-        onStartProduct={startProduct}
+        onStartProduct={() => router.push("/workshop")}
         onOpenDependencies={() => openDemo("Dependencies")}
         onOpenSimulation={() => openDemo("Simulation", "battery")}
       />
-      <section className="private-workspace-entry" id="private-models" aria-labelledby="private-entry-title">
+      <section
+        className="private-workspace-entry"
+        id="private-models"
+        aria-labelledby="workshop-entry-title"
+      >
         <div>
-          <span className="eyebrow">GO BEYOND THE DEMO</span>
-          <h2 id="private-entry-title">Bring your own model.</h2>
-          <p>Map your GLB to components in a dedicated private workspace.</p>
+          <span className="eyebrow">YOUR NEXT PROJECT</span>
+          <h2 id="workshop-entry-title">Make it your own.</h2>
+          <p>
+            Import a model, build a schematic, or return to a saved project.
+          </p>
         </div>
-        <Link className="primary" href="/private-models">
-          Open private workspace <ArrowUpRight size={18} aria-hidden="true" />
+        <Link className="primary" href="/workshop">
+          Open Workshop <ArrowUpRight size={18} aria-hidden="true" />
         </Link>
       </section>
-      <div className="landing-grid inside-product-entry">
-        <section className="intake" id="explore">
-          <div className="eyebrow">01 / START AN EXPLORATION</div>
-          <h2>Bring a product into view.</h2>
-          <p className="muted">
-            Start with an image or product name. We’ll show the available model
-            and its confidence before opening it.
-          </p>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              void identify();
-            }}
-          >
-            <label className="upload">
-              <Upload size={25} />
-              <strong>{busy ? "Validating…" : "Choose product images"}</strong>
-              <span>JPEG, PNG, WebP · up to 8 MB each · 6 views</span>
-              <input
-                type="file"
-                accept="image/jpeg,image/png,image/webp"
-                multiple
-                disabled={busy}
-                onChange={(e) => {
-                  void upload(e.target.files);
-                  e.target.value = "";
-                }}
-                aria-label="Product images"
-              />
-            </label>
-            {images.length > 0 && (
-              <div className="image-previews">
-                {images.map((img, i) => (
-                  <div key={img.url}>
-                    <Image
-                      unoptimized
-                      width={90}
-                      height={70}
-                      src={img.url}
-                      alt={`Product view ${i + 1}`}
-                    />
-                    <select
-                      aria-label={`Image ${i + 1} view`}
-                      value={img.view}
-                      onChange={(e) =>
-                        setImages((all) =>
-                          all.map((v, n) =>
-                            n === i
-                              ? { ...v, view: e.target.value as typeof v.view }
-                              : v,
-                          ),
-                        )
-                      }
-                    >
-                      {[
-                        "front",
-                        "back",
-                        "left",
-                        "right",
-                        "top",
-                        "bottom",
-                        "detail",
-                      ].map((v) => (
-                        <option key={v}>{v}</option>
-                      ))}
-                    </select>
-                    <button
-                      type="button"
-                      aria-label={`Remove image ${i + 1}`}
-                      onClick={() => {
-                        URL.revokeObjectURL(img.url);
-                        setImages((all) => all.filter((_, n) => n !== i));
-                      }}
-                    >
-                      Remove
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-            <label className="field">
-              Product name
-              <input
-                value={name}
-                onChange={(e) => {
-                  setName(e.target.value);
-                  setCandidate(null);
-                }}
-                placeholder="e.g. Smartphone"
-                maxLength={150}
-              />
-            </label>
-            <div className="form-pair">
-              <label className="field">
-                Manufacturer <span>optional</span>
-                <input
-                  value={manufacturer}
-                  onChange={(e) => {
-                    setManufacturer(e.target.value);
-                    setCandidate(null);
-                  }}
-                  placeholder="Manufacturer"
-                  maxLength={100}
-                />
-              </label>
-              <label className="field">
-                Model <span>optional</span>
-                <input
-                  value={model}
-                  onChange={(e) => {
-                    setModel(e.target.value);
-                    setCandidate(null);
-                  }}
-                  placeholder="Model number"
-                  maxLength={100}
-                />
-              </label>
-            </div>
-            <button
-              className="primary wide"
-              type="submit"
-              disabled={busy || (!name.trim() && !images.length)}
-            >
-              Analyze Product <ArrowUpRight size={18} />
-            </button>
-          </form>
-          <p className="caption">
-            Images stay in this browser. The local fallback matches text
-            metadata; it does not perform image recognition.
-          </p>
-          {error && (
-            <p role="alert" className="warning">
-              {error}
-            </p>
-          )}
-          {candidate && (
-            <div className="candidate" role="status">
-              <span className="badge">
-                {Math.round(candidate.confidence * 100)}% CATEGORY CONFIDENCE
-              </span>
-              <h3>{candidate.name}</h3>
-              <p>{candidate.reason}</p>
-              <ul>
-                {stages.map((stage) => (
-                  <li key={stage}>{stage}</li>
-                ))}
-              </ul>
-              <button
-                className="primary wide"
-                onClick={() => openDemo("Explore", undefined, smartphone)}
-              >
-                Use educational demo model →
-              </button>
-            </div>
-          )}
-          <div className="intake-note">
-            <span>✳</span> No setup. No API key. Just curiosity.
-          </div>
-        </section>
-      </div>
-      <ProjectBuilder onOpen={onOpen} />
       <section className="how-section" id="how-it-works">
         <div className="how-heading">
           <span className="eyebrow">A CLOSER LOOK AT THE EVERYDAY</span>

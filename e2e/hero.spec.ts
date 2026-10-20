@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-test("reduced motion keeps chapters and product intake accessible", async ({
+test("reduced motion keeps chapters and Workshop navigation accessible", async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
@@ -21,10 +21,11 @@ test("reduced motion keeps chapters and product intake accessible", async ({
   ).toHaveAttribute("aria-pressed", "true");
   await page.getByRole("button", { name: "Back to product input" }).click();
   await page
-    .getByRole("button", { name: "Bring your product", exact: true })
+    .getByRole("button", { name: "Open Workshop", exact: true })
     .last()
     .click();
-  await expect(page.locator("#explore")).toBeInViewport();
+  await expect(page).toHaveURL(/\/workshop$/);
+  await expect(page.getByRole("heading", { name: "One place for your projects." })).toBeVisible();
 });
 
 test("WebGL context loss leaves the landing actions usable", async ({

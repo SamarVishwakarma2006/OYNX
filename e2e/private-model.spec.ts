@@ -43,58 +43,55 @@ test("private GLB maps, saves, survives refresh, exports and restores", async ({
   vertices.copy(buffer, 28 + padded.length);
   await page.goto("/");
   await expect(page.getByLabel("3D assembly")).toHaveCount(0);
-  await page.getByRole("link", { name: "Open private workspace" }).click();
-  await expect(page).toHaveURL(/\/private-models$/);
+  await page.getByRole("link", { name: "Open Workshop" }).click();
+  await expect(page).toHaveURL(/\/workshop$/);
   const workspace = page.locator("#private-models");
-  await workspace
-    .getByLabel("3D assembly")
-    .setInputFiles({
-      name: "Private test.glb",
-      mimeType: "model/gltf-binary",
-      buffer,
-    });
+  const library = page.locator(".workshop-library");
+  await workspace.getByLabel("3D assembly").setInputFiles({
+    name: "Private test.glb",
+    mimeType: "model/gltf-binary",
+    buffer,
+  });
   await expect(
     workspace.getByText("2 meshes found.", { exact: false }),
   ).toBeVisible();
-  await workspace
-    .getByLabel("Parts list CSV")
-    .setInputFiles({
-      name: "parts.csv",
-      mimeType: "text/csv",
-      buffer: Buffer.from("name,mesh\nBattery,Cell\nHeat shield,Shield"),
-    });
+  await workspace.getByLabel("Parts list CSV").setInputFiles({
+    name: "parts.csv",
+    mimeType: "text/csv",
+    buffer: Buffer.from("name,mesh\nBattery,Cell\nHeat shield,Shield"),
+  });
   await expect(workspace.getByLabel("Component name").first()).toHaveValue(
     "Battery",
   );
-  await workspace.getByRole("button", { name: "Save on this browser" }).click();
+  await workspace.getByRole("button", { name: "Save project" }).click();
   await expect(
-    workspace.getByText("Saved on this browser.", { exact: false }),
+    page.getByRole("status").filter({ hasText: "Saved on this browser" }),
   ).toBeVisible();
   const downloadPromise = page.waitForEvent("download");
-  await workspace.getByRole("button", { name: "Export backup" }).click();
+  await library.getByRole("button", { name: "Export backup" }).click();
   const download = await downloadPromise;
   const backup = await download.path();
   await page.reload();
   await expect(
-    workspace.getByRole("button", { name: "Export backup" }),
+    library.getByRole("button", { name: "Export backup" }),
   ).toBeVisible();
-  await workspace.getByRole("button", { name: "Open", exact: true }).click();
+  await library.getByRole("button", { name: "Open", exact: true }).click();
   await expect(page.getByText("GLTF MODEL READY")).toBeVisible();
   await page.getByRole("button", { name: "Battery", exact: true }).click();
   await expect(page.locator(".inspector h2")).toHaveText("Battery");
-  await page.getByRole("link", { name: "Private workspace", exact: true }).click();
-  await expect(workspace.getByLabel("3D assembly")).toBeVisible();
-  await workspace.getByRole("button", { name: "Delete local copy" }).click();
+  await page.getByRole("link", { name: "Workshop", exact: true }).click();
+  await expect(library).toBeVisible();
+  await library.getByRole("button", { name: "Delete local copy" }).click();
   await expect(
-    workspace.getByRole("button", { name: "Export backup" }),
+    library.getByRole("button", { name: "Export backup" }),
   ).toHaveCount(0);
-  await workspace
-    .getByLabel("Restore private project backup")
+  await library
+    .getByLabel("Restore project backup or JSON")
     .setInputFiles(backup!);
   await expect(
-    workspace.getByText("Backup restored locally.", { exact: false }),
+    page.getByText("Project restored locally. Open it below."),
   ).toBeVisible();
   await expect(
-    workspace.getByRole("button", { name: "Open", exact: true }),
+    library.getByRole("button", { name: "Open", exact: true }),
   ).toBeVisible();
 });

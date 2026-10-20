@@ -47,35 +47,36 @@ test("imports a mapped GLTF model and preserves a usable fallback for a missing 
   await page.route("**/missing-twin.glb", (route) =>
     route.fulfill({ status: 404, body: "Not found" }),
   );
-  await page.goto("/");
-  await page.getByRole("button", { name: "Explore the demo" }).click();
-  await page.locator(".dataset-tools summary").click();
+  await page.goto("/workshop#projects");
   const product = {
     ...smartphone,
     name: "Imported fixture",
     model3D: { type: "gltf", url: "/test-twin.gltf" },
   };
-  await page.getByLabel("Import product JSON").setInputFiles({
+  await page.getByLabel("Restore project backup or JSON").setInputFiles({
     name: "product.json",
     mimeType: "application/json",
     buffer: Buffer.from(JSON.stringify(product)),
   });
+  await page.getByRole("button", { name: "Open", exact: true }).click();
   await expect(page.locator(".product-title")).toContainText(
     "Imported fixture",
   );
-  await expect(
-    page.getByText("Product dataset validated and loaded."),
-  ).toBeVisible();
   await expect(page.getByText("GLTF MODEL READY")).toBeVisible();
   await page.getByRole("button", { name: "Battery", exact: true }).click();
   await page.getByRole("button", { name: "Focus", exact: true }).click();
   await expect(page.locator("canvas")).toBeVisible();
+  await page.getByRole("link", { name: "Workshop", exact: true }).click();
   product.model3D.url = "/missing-twin.glb";
-  await page.getByLabel("Import product JSON").setInputFiles({
+  await page.getByLabel("Restore project backup or JSON").setInputFiles({
     name: "product.json",
     mimeType: "application/json",
     buffer: Buffer.from(JSON.stringify(product)),
   });
+  await expect(
+    page.getByText("Project restored locally. Open it below."),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Open", exact: true }).click();
   await expect(page.getByText(/Showing the procedural fallback/)).toBeVisible();
   await expect(page.locator("canvas")).toBeVisible();
   await page.getByRole("button", { name: "Battery", exact: true }).click();

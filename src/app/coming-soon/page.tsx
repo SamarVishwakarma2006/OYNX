@@ -12,7 +12,7 @@ export default function ComingSoon() {
     <main className="studio-page automotive">
       <nav className="studio-nav">
         <Link href="/">inside /</Link>
-        <Link href="/#build">Build a project ↗</Link>
+        <Link href="/workshop#build">Build a project ↗</Link>
       </nav>
       <div className="automotive-heading">
         <span className="eyebrow">NEXT CHAPTER / AUTOMOTIVE</span>

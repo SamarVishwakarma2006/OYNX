@@ -59,7 +59,7 @@ export default function Impact() {
     <main className="studio-page">
       <nav className="studio-nav">
         <Link href="/">inside /</Link>
-        <Link href="/#build">Guided builder ↗</Link>
+        <Link href="/workshop#build">Guided builder ↗</Link>
       </nav>
       <span className="eyebrow">REPAIR OUTCOME LOG</span>
       <h1>

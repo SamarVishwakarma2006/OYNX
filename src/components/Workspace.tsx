@@ -20,7 +20,6 @@ import { modes, useWorkspace } from "../lib/store";
 import { Inspector, RepairPanel, SimulationPanel } from "./Inspector";
 import { DependencyView } from "./DependencyView";
 import { Assistant } from "./Assistant";
-import { DatasetLoader } from "./DatasetLoader";
 import { ErrorBoundary } from "./ErrorBoundary";
 const Viewer = dynamic(() => import("./Viewer"), {
   ssr: false,
@@ -157,10 +156,9 @@ export function Workspace({ onBack }: { onBack: () => void }) {
           {s.product.dataSources[0].sourceType.toUpperCase()} DATA
         </span>
         <div className="header-actions">
-          <Link href="/#build" onClick={onBack}>
-            Builder
+          <Link href="/workshop#projects" onClick={onBack}>
+            Workshop
           </Link>
-          <Link href="/private-models" onClick={onBack}>Private workspace</Link>
           <a href={`/impact?product=${encodeURIComponent(s.product.name)}`}>
             Repair log
           </a>
@@ -262,7 +260,6 @@ export function Workspace({ onBack }: { onBack: () => void }) {
                 </section>
               ))}
             </div>
-            <DatasetLoader />
             <div className="navigator-foot">
               <span className="status-dot" />
               Local dataset ready<button onClick={s.restore}>Show all</button>

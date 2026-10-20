@@ -3,10 +3,7 @@ import { Suspense, useEffect, useMemo, useState } from "react";
 import {
   inspectGlb,
   mappedProduct,
-  privateProjects,
   parsePartsCsv,
-  exportPrivateProject,
-  importPrivateProject,
   namePrivateNodes,
   type ModelPart,
   type PrivateProject,
@@ -79,7 +76,13 @@ function ModelPreview({
   );
 }
 
-export function PrivateModelBuilder({ onOpen }: { onOpen: () => void }) {
+export function PrivateModelBuilder({
+  onOpen,
+  onSave,
+}: {
+  onOpen: () => void;
+  onSave: (record: PrivateProject) => Promise<void>;
+}) {
   const [file, setFile] = useState<File | null>(null);
   const [name, setName] = useState("");
   const [model, setModel] = useState<{
@@ -88,7 +91,6 @@ export function PrivateModelBuilder({ onOpen }: { onOpen: () => void }) {
     scale: number;
   } | null>(null);
   const [assignments, setAssignments] = useState<Record<string, string>>({});
-  const [saved, setSaved] = useState<PrivateProject[]>([]);
   const [preview, setPreview] = useState("");
   const [selected, setSelected] = useState("");
   const [csvNames, setCsvNames] = useState<string[]>([]);
@@ -102,11 +104,6 @@ export function PrivateModelBuilder({ onOpen }: { onOpen: () => void }) {
   }, [preview]);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
-  useEffect(() => {
-    privateProjects("list")
-      .then(setSaved)
-      .catch((e) => setMessage(e.message));
-  }, []);
   async function importModel(file: File | undefined) {
     if (!file) return;
     setBusy(true);
@@ -156,9 +153,9 @@ export function PrivateModelBuilder({ onOpen }: { onOpen: () => void }) {
             model3D: { ...product.model3D, url: "/private-local-model" },
           },
         };
-        setSaved(await privateProjects("save", record));
+        await onSave(record);
         setMessage(
-          "Saved on this browser. Use the saved project below to reopen it.",
+          "Saved on this browser. Find it under Open an existing project.",
         );
       } else {
         useWorkspace.getState().loadProduct(product);
@@ -169,21 +166,6 @@ export function PrivateModelBuilder({ onOpen }: { onOpen: () => void }) {
       setMessage(e instanceof Error ? e.message : "Could not open project.");
     } finally {
       setBusy(false);
-    }
-  }
-  async function reopen(record: PrivateProject) {
-    try {
-      await inspectGlb(record.file);
-      useWorkspace
-        .getState()
-        .loadProduct({
-          ...record.product,
-          model3D: { ...record.product.model3D, url: modelUrl(record.file) },
-        });
-      onOpen();
-      window.scrollTo(0, 0);
-    } catch (e) {
-      setMessage(e instanceof Error ? e.message : "Could not reopen project.");
     }
   }
   return (
@@ -212,33 +194,6 @@ export function PrivateModelBuilder({ onOpen }: { onOpen: () => void }) {
             onChange={(e) => {
               void importModel(e.target.files?.[0]);
               e.target.value = "";
-            }}
-          />
-        </label>
-        <label className="field">
-          Restore private project backup
-          <input
-            type="file"
-            accept=".json"
-            disabled={busy}
-            onChange={async (e) => {
-              const file = e.target.files?.[0];
-              e.target.value = "";
-              if (!file) return;
-              setBusy(true);
-              try {
-                const record = await importPrivateProject(file);
-                setSaved(await privateProjects("save", record));
-                setMessage("Backup restored locally. Open it below.");
-              } catch (error) {
-                setMessage(
-                  error instanceof Error
-                    ? error.message
-                    : "Could not restore backup.",
-                );
-              } finally {
-                setBusy(false);
-              }
             }}
           />
         </label>
@@ -385,7 +340,7 @@ export function PrivateModelBuilder({ onOpen }: { onOpen: () => void }) {
                 disabled={busy || !name.trim()}
                 onClick={() => void open(true)}
               >
-                Save on this browser
+                Save project
               </button>
               <button
                 className="primary"
@@ -400,39 +355,6 @@ export function PrivateModelBuilder({ onOpen }: { onOpen: () => void }) {
         {message && <p role="status">{message}</p>}
         {busy && <p role="status">Processing locally…</p>}
       </div>
-      {saved.length > 0 && (
-        <div className="studio-card">
-          <h3>Private projects on this browser</h3>
-          <ul className="record-list">
-            {saved.map((record) => (
-              <li key={record.id}>
-                <strong>{record.name}</strong>
-                <div className="studio-actions">
-                  <button onClick={() => void reopen(record)}>Open</button>
-                  <button
-                    onClick={() => {
-                      void exportPrivateProject(record).catch((e) =>
-                        setMessage(e.message),
-                      );
-                    }}
-                  >
-                    Export backup
-                  </button>
-                  <button
-                    onClick={() => {
-                      void privateProjects("delete", undefined, record.id)
-                        .then(setSaved)
-                        .catch((e) => setMessage(e.message));
-                    }}
-                  >
-                    Delete local copy
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
       <p className="caption">
         Local storage is specific to this browser and site address. Clearing
         site data removes saved models. Uploaded geometry does not establish

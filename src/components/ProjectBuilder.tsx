@@ -1,14 +1,8 @@
-/* eslint-disable react-hooks/set-state-in-effect -- Hydrate browser-only local records after SSR; never write storage during hydration. */
 "use client";
-import { useEffect, useState } from "react";
-import Link from "next/link";
+import { useState } from "react";
 import {
   buildProduct,
-  downloadJson,
   draftPartSchema,
-  projectsSchema,
-  readLocal,
-  writeLocal,
   type DraftPart,
 } from "../lib/community";
 import type { Product } from "../lib/product";
@@ -20,24 +14,21 @@ const emptyPart: DraftPart = {
   status: "unknown",
   note: "",
 };
-export function ProjectBuilder({ onOpen }: { onOpen: () => void }) {
+export function ProjectBuilder({
+  onOpen,
+  onSave,
+}: {
+  onOpen: () => void;
+  onSave: (product: Product) => Promise<void>;
+}) {
   const [step, setStep] = useState(0),
     [name, setName] = useState("");
   const [parts, setParts] = useState<DraftPart[]>([]),
     [part, setPart] = useState<DraftPart>(emptyPart);
-  const [projects, setProjects] = useState<Product[]>([]),
-    [ready, setReady] = useState<Product | null>(null);
+  const [ready, setReady] = useState<Product | null>(null);
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState(""),
     [notice, setNotice] = useState("");
-  useEffect(() => {
-    try {
-      setProjects(readLocal("inside-projects-v1", projectsSchema, []));
-    } catch {
-      setError(
-        "Saved projects could not be read. Existing data has been preserved; you can still export a new project.",
-      );
-    }
-  }, []);
   function addPart() {
     const result = draftPartSchema.safeParse(part);
     if (!result.success) {
@@ -59,17 +50,17 @@ export function ProjectBuilder({ onOpen }: { onOpen: () => void }) {
       );
     }
   }
-  function save() {
+  async function save() {
     if (!ready) return;
+    setSaving(true);
     try {
-      const existing = readLocal("inside-projects-v1", projectsSchema, []);
-      const next = [...existing.filter((p) => p.id !== ready.id), ready];
-      writeLocal("inside-projects-v1", next);
-      setProjects(next);
-      setNotice("Saved on this browser. Export a backup to keep it safe.");
+      await onSave(ready);
+      setNotice("Saved on this browser.");
       setError("");
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not save.");
+    } finally {
+      setSaving(false);
     }
   }
   function explore(product: Product) {
@@ -83,11 +74,7 @@ export function ProjectBuilder({ onOpen }: { onOpen: () => void }) {
       id="build"
       aria-labelledby="builder-title"
     >
-      <nav className="studio-nav">
-        <span className="eyebrow">BUILD YOUR PROJECT</span>
-        <Link href="/impact">Repair outcome log ↗</Link>
-      </nav>
-      <span className="eyebrow">COMMUNITY KNOWLEDGE / NO CAD REQUIRED</span>
+      <span className="eyebrow">BUILD WITHOUT A MODEL</span>
       <h2 id="builder-title">
         Start with what
         <br />
@@ -252,10 +239,9 @@ export function ProjectBuilder({ onOpen }: { onOpen: () => void }) {
             </ul>
             <div className="studio-actions">
               <button onClick={() => setStep(1)}>Edit components</button>
-              <button onClick={() => downloadJson(ready, "inside-device.json")}>
-                Export JSON
+              <button disabled={saving} onClick={() => void save()}>
+                {saving ? "Saving…" : "Save project"}
               </button>
-              <button onClick={save}>Save locally</button>
               <button className="primary" onClick={() => explore(ready)}>
                 Open schematic →
               </button>
@@ -265,28 +251,9 @@ export function ProjectBuilder({ onOpen }: { onOpen: () => void }) {
         {error && <p role="alert">{error}</p>}
         {notice && <p role="status">{notice}</p>}
       </section>
-      {projects.length > 0 && (
-        <section className="studio-card">
-          <h2>Saved on this browser</h2>
-          <ul className="record-list">
-            {projects.map((p) => (
-              <li key={p.id}>
-                <strong>{p.name}</strong>
-                <div className="studio-actions">
-                  <button onClick={() => downloadJson(p, "inside-device.json")}>
-                    Export
-                  </button>
-                  <button onClick={() => explore(p)}>Open</button>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
       <footer>
-        Records stay on this browser. No account, cloud sync or automatic
-        verification. Export JSON for a portable backup; import it from the
-        workspace.
+        Save your project to find it under Open an existing project. Export a
+        backup there to keep a portable copy.
       </footer>
     </section>
   );
