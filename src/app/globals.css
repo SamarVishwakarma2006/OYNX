@@ -2374,6 +2374,21 @@ dialog::backdrop {
   font-style: normal;
   color: #a0b5aa;
 }
+.landing-builder {
+  min-height: auto;
+  scroll-margin-top: 24px;
+}
+.studio-page.landing-builder > h2 {
+  font-size: clamp(36px, 5vw, 72px);
+  line-height: 1.04;
+  letter-spacing: -0.055em;
+  margin: 22px 0;
+  font-weight: 550;
+}
+.landing-builder > h2 em {
+  font-style: normal;
+  color: #a0b5aa;
+}
 .studio-page h2 {
   font-size: 24px;
   margin: 10px 0 18px;
@@ -2586,4 +2601,39 @@ dialog::backdrop {
     flex-wrap: wrap;
     gap: 3px;
   }
+}
+
+/* A compact entry point keeps the import tools off the landing page. */
+.private-workspace-entry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin: 40px 6% 0;
+  padding: 28px clamp(20px, 4vw, 48px);
+  border: 1px solid #33483f;
+  border-radius: 20px;
+  background: #101c1a;
+}
+.private-workspace-entry h2 {
+  margin: 8px 0;
+  font-size: clamp(24px, 3vw, 36px);
+}
+.private-workspace-entry p { margin: 0; color: #aebdb7; }
+.private-workspace-entry a {
+  padding: 14px 20px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.private-model-page { min-height: 100dvh; background: #0c1115; color: #e7edea; }
+.private-model-nav { padding: 24px clamp(20px, 6vw, 100px) 0; margin: 0; }
+.private-model-nav a { color: #b2d8c7; text-decoration: none; }
+@media (max-width: 700px) {
+  .private-workspace-entry { flex-direction: column; align-items: stretch; }
+  .private-workspace-entry a { white-space: normal; }
 }

@@ -1,5 +1,6 @@
 "use client";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import {
   Box,
@@ -156,7 +157,10 @@ export function Workspace({ onBack }: { onBack: () => void }) {
           {s.product.dataSources[0].sourceType.toUpperCase()} DATA
         </span>
         <div className="header-actions">
-          <a href="/build">Builder</a>
+          <Link href="/#build" onClick={onBack}>
+            Builder
+          </Link>
+          <Link href="/private-models" onClick={onBack}>Private workspace</Link>
           <a href={`/impact?product=${encodeURIComponent(s.product.name)}`}>
             Repair log
           </a>

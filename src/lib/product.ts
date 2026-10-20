@@ -148,9 +148,15 @@ export const productSchema = z.object({
       .regex(/^\/[^/]/)
       .optional(),
     type: z.enum(["procedural", "gltf"]),
+    privateNodes: z.boolean().optional(),
+    center: vector.optional(),
+    scale: z.number().positive().finite().optional(),
     url: z
       .string()
-      .regex(/^(\/[^/]|https:\/\/)/, "Use a same-origin path or HTTPS URL")
+      .regex(
+        /^(\/[^/]|https:\/\/|blob:https?:\/\/)/,
+        "Use a same-origin path or HTTPS URL",
+      )
       .optional(),
   }),
   components: z.array(componentSchema).min(1),

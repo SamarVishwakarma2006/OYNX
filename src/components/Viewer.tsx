@@ -756,7 +756,7 @@ function ImportedModel() {
         )
           target.addScaledVector(
             new Vector3(...c.geometry.explodedOffset),
-            s.explosionFactor,
+            s.explosionFactor / (s.product.model3D.scale ?? 1),
           );
         n.position.lerp(
           target,
@@ -797,6 +797,8 @@ function ImportedModel() {
   return (
     <primitive
       object={root}
+      scale={s.product.model3D.scale ?? 1}
+      position={s.product.model3D.center?.map((n) => -n * (s.product.model3D.scale ?? 1)) as [number, number, number] | undefined}
       onPointerOver={(e: ThreeEvent<PointerEvent>) =>
         setHovered(componentForNode(e.object, s.product)?.id ?? null)
       }

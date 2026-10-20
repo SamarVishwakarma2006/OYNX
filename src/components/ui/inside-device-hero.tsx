@@ -245,7 +245,7 @@ export default function InsideDeviceHero(props: Props) {
             <a href="/coming-soon" className="inside-hero-skip">
               Automotive ↗
             </a>
-            <a href="/build" className="inside-hero-skip">
+            <a href="#build" className="inside-hero-skip">
               Guided builder
             </a>
             <button onClick={props.onStartProduct} className="inside-hero-skip">

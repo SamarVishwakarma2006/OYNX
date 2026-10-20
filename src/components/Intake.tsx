@@ -1,6 +1,8 @@
 "use client";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import InsideDeviceHero from "./ui/inside-device-hero";
+import Link from "next/link";
+import { ProjectBuilder } from "./ProjectBuilder";
 
 import Image from "next/image";
 import { ArrowUpRight, Upload } from "lucide-react";
@@ -120,6 +122,16 @@ export function Intake({ onOpen }: { onOpen: () => void }) {
         onOpenDependencies={() => openDemo("Dependencies")}
         onOpenSimulation={() => openDemo("Simulation", "battery")}
       />
+      <section className="private-workspace-entry" id="private-models" aria-labelledby="private-entry-title">
+        <div>
+          <span className="eyebrow">GO BEYOND THE DEMO</span>
+          <h2 id="private-entry-title">Bring your own model.</h2>
+          <p>Map your GLB to components in a dedicated private workspace.</p>
+        </div>
+        <Link className="primary" href="/private-models">
+          Open private workspace <ArrowUpRight size={18} aria-hidden="true" />
+        </Link>
+      </section>
       <div className="landing-grid inside-product-entry">
         <section className="intake" id="explore">
           <div className="eyebrow">01 / START AN EXPLORATION</div>
@@ -280,6 +292,7 @@ export function Intake({ onOpen }: { onOpen: () => void }) {
           </div>
         </section>
       </div>
+      <ProjectBuilder onOpen={onOpen} />
       <section className="how-section" id="how-it-works">
         <div className="how-heading">
           <span className="eyebrow">A CLOSER LOOK AT THE EVERYDAY</span>

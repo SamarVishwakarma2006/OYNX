@@ -1,3 +1,4 @@
+import { namePrivateNodes } from "./private-project";
 import { Mesh, type Object3D, type Material, Vector3 } from "three";
 import type { Product } from "./product";
 import { validateProduct } from "./product";
@@ -13,6 +14,10 @@ export function componentForNode(node: Object3D | null, product: Product) {
 }
 
 export function prepareModel(scene: Object3D, product: Product) {
+  if (product.model3D.privateNodes) {
+    scene = scene.clone(true);
+    namePrivateNodes(scene);
+  }
   const names: string[] = [];
   scene.traverse((n) => {
     if (n.name) names.push(n.name);
